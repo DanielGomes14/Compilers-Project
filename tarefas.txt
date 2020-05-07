@@ -1,0 +1,20 @@
+Gramatica geral (compilador) -> daniel,bastos,pedro;
+Gramatica Dimensoes(intepretador) ->goncalo,miguel
+Visitor para compilador ->daniel,bastos
+Visitor para intepretador_>goncalo,miguel
+analise lexica(Visitor)->pedro
+Main para compilador,intepretador->daniel,bastos
+
+
+Ideias:
+2 Gramaticas , uma onde definimos as grandezas
+ Exemplo:  Dist -> real (m);
+           Temp-> int (s);
+           vel -> Dist/Temp;
+e outra com  os objetos dessas grandezas para fazer operaçoes;
+Exemplo:
+Dist d = 2m;
+Dist c = 3cm;
+c = c + d;
+Temp t = 4s;
+Vel v = d/c;           
