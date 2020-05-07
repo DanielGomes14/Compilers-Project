@@ -1,3 +1,4 @@
+--Isto foi so uma sugestão neste momento todos temos de focar nas gramatica das dimensões e no visitor dela:
 Gramatica geral (compilador) -> daniel,bastos,pedro;
 Gramatica Dimensoes(intepretador) ->goncalo,miguel
 Visitor para compilador ->daniel,bastos
@@ -14,7 +15,19 @@ Ideias:
 e outra com  os objetos dessas grandezas para fazer operaçoes;
 Exemplo:
 Dist d = 2m;
-Dist c = 3cm;
+Dist c = 3m;
 c = c + d;
 Temp t = 4s;
 Vel v = d/c;           
+
+Symbol -> vai ser tipo as variaveis, em que cada symbol vai ter um nome( nome de variavel), um type (tipo de Dados se é int,real,boolean ou uma Dimensao), a nome da dimensão associada( caso n tenha pode ficar tipo "nodimension" ou "adim" e um valor(que pode ser nulo ou não depende se ja foi feito assignment ou não)  e o nome da unidade associada ( caso seja uma variavel normal fica tipo "noUnit"). o Nome da dimensão e o nome da unidade apenas podemos ter  para tipo ser mais facil ir buscar dados. 
+   
+- criar classe Dimensao extends Type (visto q e um tipo de dados):
+essa classe tem como atributo o nome da dimensão, um arraylist de unidades
+o tipo de dados associado aos objetos desta dimensão(real ou int) (pode ser kinda confuso isto pode haver melhor maneira)
+
+
+como fzr conversão? 
+idk maybe na declaração de dimensões ficar do genero:
+Dist -> real(m)
+Dist.addUnit(cm=100*m) ( checkar always se o m ja existe..)
