@@ -22,6 +22,6 @@ public abstract class Type
    {
       return name;
    }
-
+   
    protected final String name;
 }

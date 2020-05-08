@@ -55,6 +55,18 @@ public class DimensionsBaseListener implements DimensionsListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterAddUn(DimensionsParser.AddUnContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitAddUn(DimensionsParser.AddUnContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterTypeNormal(DimensionsParser.TypeNormalContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -79,13 +91,37 @@ public class DimensionsBaseListener implements DimensionsListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterDatatype(DimensionsParser.DatatypeContext ctx) { }
+	@Override public void enterTypeConversions(DimensionsParser.TypeConversionsContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitDatatype(DimensionsParser.DatatypeContext ctx) { }
+	@Override public void exitTypeConversions(DimensionsParser.TypeConversionsContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterConvCheck(DimensionsParser.ConvCheckContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitConvCheck(DimensionsParser.ConvCheckContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterDTypeCheck(DimensionsParser.DTypeCheckContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDTypeCheck(DimensionsParser.DTypeCheckContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

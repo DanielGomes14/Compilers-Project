@@ -11,11 +11,11 @@ Ideias:
 2 Gramaticas , uma onde definimos as grandezas
  Exemplo:  Dist -> real (m);
            Temp-> int (s);
-           vel -> Dist/Temp;
+           vel -> Dist/Temp(m/s);
 e outra com  os objetos dessas grandezas para fazer operaçoes;
 Exemplo:
 Dist d = 2m;
-Dist c = 3m;
+Dist c = 3mm;
 c = c + d;
 Temp t = 4s;
 Vel v = d/c;           
@@ -30,4 +30,11 @@ o tipo de dados associado aos objetos desta dimensão(real ou int) (pode ser kin
 como fzr conversão? 
 idk maybe na declaração de dimensões ficar do genero:
 Dist -> real(m)
+Dist.addUnit(cm,100*m);
+DIst.addUnit(polegadas= 2.14 cm)?
+
 Dist.addUnit(cm=100*m) ( checkar always se o m ja existe..)
+Dist.addunit(mm=10*cm)
+
+
+import grandezas.txt

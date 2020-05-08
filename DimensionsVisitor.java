@@ -35,6 +35,13 @@ public interface DimensionsVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDeclar(DimensionsParser.DeclarContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code addUn}
+	 * labeled alternative in {@link DimensionsParser#addunit}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAddUn(DimensionsParser.AddUnContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code TypeNormal}
 	 * labeled alternative in {@link DimensionsParser#type}.
 	 * @param ctx the parse tree
@@ -49,11 +56,26 @@ public interface DimensionsVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitTypeVars(DimensionsParser.TypeVarsContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link DimensionsParser#datatype}.
+	 * Visit a parse tree produced by the {@code TypeConversions}
+	 * labeled alternative in {@link DimensionsParser#type}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitDatatype(DimensionsParser.DatatypeContext ctx);
+	T visitTypeConversions(DimensionsParser.TypeConversionsContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code ConvCheck}
+	 * labeled alternative in {@link DimensionsParser#conversion}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitConvCheck(DimensionsParser.ConvCheckContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code DTypeCheck}
+	 * labeled alternative in {@link DimensionsParser#datatype}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDTypeCheck(DimensionsParser.DTypeCheckContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code unitCheck}
 	 * labeled alternative in {@link DimensionsParser#unit}.

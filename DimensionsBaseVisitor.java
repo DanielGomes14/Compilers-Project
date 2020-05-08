@@ -41,6 +41,13 @@ public class DimensionsBaseVisitor<T> extends AbstractParseTreeVisitor<T> implem
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
+	@Override public T visitAddUn(DimensionsParser.AddUnContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
 	@Override public T visitTypeNormal(DimensionsParser.TypeNormalContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
@@ -55,7 +62,21 @@ public class DimensionsBaseVisitor<T> extends AbstractParseTreeVisitor<T> implem
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitDatatype(DimensionsParser.DatatypeContext ctx) { return visitChildren(ctx); }
+	@Override public T visitTypeConversions(DimensionsParser.TypeConversionsContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitConvCheck(DimensionsParser.ConvCheckContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitDTypeCheck(DimensionsParser.DTypeCheckContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

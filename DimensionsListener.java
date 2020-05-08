@@ -47,6 +47,18 @@ public interface DimensionsListener extends ParseTreeListener {
 	 */
 	void exitDeclar(DimensionsParser.DeclarContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code addUn}
+	 * labeled alternative in {@link DimensionsParser#addunit}.
+	 * @param ctx the parse tree
+	 */
+	void enterAddUn(DimensionsParser.AddUnContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code addUn}
+	 * labeled alternative in {@link DimensionsParser#addunit}.
+	 * @param ctx the parse tree
+	 */
+	void exitAddUn(DimensionsParser.AddUnContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code TypeNormal}
 	 * labeled alternative in {@link DimensionsParser#type}.
 	 * @param ctx the parse tree
@@ -71,15 +83,41 @@ public interface DimensionsListener extends ParseTreeListener {
 	 */
 	void exitTypeVars(DimensionsParser.TypeVarsContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link DimensionsParser#datatype}.
+	 * Enter a parse tree produced by the {@code TypeConversions}
+	 * labeled alternative in {@link DimensionsParser#type}.
 	 * @param ctx the parse tree
 	 */
-	void enterDatatype(DimensionsParser.DatatypeContext ctx);
+	void enterTypeConversions(DimensionsParser.TypeConversionsContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link DimensionsParser#datatype}.
+	 * Exit a parse tree produced by the {@code TypeConversions}
+	 * labeled alternative in {@link DimensionsParser#type}.
 	 * @param ctx the parse tree
 	 */
-	void exitDatatype(DimensionsParser.DatatypeContext ctx);
+	void exitTypeConversions(DimensionsParser.TypeConversionsContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code ConvCheck}
+	 * labeled alternative in {@link DimensionsParser#conversion}.
+	 * @param ctx the parse tree
+	 */
+	void enterConvCheck(DimensionsParser.ConvCheckContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ConvCheck}
+	 * labeled alternative in {@link DimensionsParser#conversion}.
+	 * @param ctx the parse tree
+	 */
+	void exitConvCheck(DimensionsParser.ConvCheckContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code DTypeCheck}
+	 * labeled alternative in {@link DimensionsParser#datatype}.
+	 * @param ctx the parse tree
+	 */
+	void enterDTypeCheck(DimensionsParser.DTypeCheckContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code DTypeCheck}
+	 * labeled alternative in {@link DimensionsParser#datatype}.
+	 * @param ctx the parse tree
+	 */
+	void exitDTypeCheck(DimensionsParser.DTypeCheckContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code unitCheck}
 	 * labeled alternative in {@link DimensionsParser#unit}.
