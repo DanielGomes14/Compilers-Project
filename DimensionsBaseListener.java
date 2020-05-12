@@ -115,13 +115,13 @@ public class DimensionsBaseListener implements DimensionsListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterDTypeCheck(DimensionsParser.DTypeCheckContext ctx) { }
+	@Override public void enterDatatype(DimensionsParser.DatatypeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitDTypeCheck(DimensionsParser.DTypeCheckContext ctx) { }
+	@Override public void exitDatatype(DimensionsParser.DatatypeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

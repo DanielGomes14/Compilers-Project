@@ -21,8 +21,8 @@ public class DimensionsParser extends Parser {
 		new PredictionContextCache();
 	public static final int
 		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, T__6=7, T__7=8, T__8=9, 
-		T__9=10, T__10=11, T__11=12, DIGIT=13, LETTER=14, DIMID=15, ID=16, COMMENT=17, 
-		MULTICOMMENT=18, WS=19;
+		T__9=10, T__10=11, DIGIT=12, LETTER=13, DIMID=14, ID=15, COMMENT=16, MULTICOMMENT=17, 
+		WS=18;
 	public static final int
 		RULE_program = 0, RULE_stats = 1, RULE_declaration = 2, RULE_addunit = 3, 
 		RULE_type = 4, RULE_conversion = 5, RULE_datatype = 6, RULE_unit = 7;
@@ -36,15 +36,15 @@ public class DimensionsParser extends Parser {
 
 	private static String[] makeLiteralNames() {
 		return new String[] {
-			null, "';'", "'->'", "'.addUnit('", "')'", "'/'", "'*'", "','", "'='", 
-			"'op'", "'real'", "'int'", "'('"
+			null, "';'", "'->'", "'-> addUnit'", "'/'", "'*'", "','", "'='", "'real'", 
+			"'int'", "'('", "')'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 	private static String[] makeSymbolicNames() {
 		return new String[] {
 			null, null, null, null, null, null, null, null, null, null, null, null, 
-			null, "DIGIT", "LETTER", "DIMID", "ID", "COMMENT", "MULTICOMMENT", "WS"
+			"DIGIT", "LETTER", "DIMID", "ID", "COMMENT", "MULTICOMMENT", "WS"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -94,7 +94,7 @@ public class DimensionsParser extends Parser {
 	public ATN getATN() { return _ATN; }
 
 
-	    static protected Map<String,Dimension> dimTable = new HashMap<>();
+	    static protected Map<String,Symbol> symbolTable = new HashMap<>();
 
 	public DimensionsParser(TokenStream input) {
 		super(input);
@@ -348,8 +348,6 @@ public class DimensionsParser extends Parser {
 			match(T__2);
 			setState(36);
 			type();
-			setState(37);
-			match(T__3);
 			}
 		}
 		catch (RecognitionException re) {
@@ -448,16 +446,16 @@ public class DimensionsParser extends Parser {
 		enterRule(_localctx, 8, RULE_type);
 		int _la;
 		try {
-			setState(50);
+			setState(49);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,2,_ctx) ) {
 			case 1:
 				_localctx = new TypeNormalContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(39);
+				setState(38);
 				datatype();
-				setState(40);
+				setState(39);
 				unit();
 				}
 				break;
@@ -465,12 +463,12 @@ public class DimensionsParser extends Parser {
 				_localctx = new TypeVarsContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(42);
+				setState(41);
 				match(DIMID);
-				setState(43);
+				setState(42);
 				((TypeVarsContext)_localctx).op = _input.LT(1);
 				_la = _input.LA(1);
-				if ( !(_la==T__4 || _la==T__5) ) {
+				if ( !(_la==T__3 || _la==T__4) ) {
 					((TypeVarsContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 				}
 				else {
@@ -478,9 +476,9 @@ public class DimensionsParser extends Parser {
 					_errHandler.reportMatch(this);
 					consume();
 				}
-				setState(44);
+				setState(43);
 				match(DIMID);
-				setState(45);
+				setState(44);
 				unit();
 				}
 				break;
@@ -488,11 +486,11 @@ public class DimensionsParser extends Parser {
 				_localctx = new TypeConversionsContext(_localctx);
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(46);
+				setState(45);
 				datatype();
+				setState(46);
+				match(T__5);
 				setState(47);
-				match(T__6);
-				setState(48);
 				conversion();
 				}
 				break;
@@ -551,16 +549,16 @@ public class DimensionsParser extends Parser {
 			_localctx = new ConvCheckContext(_localctx);
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(52);
+			setState(51);
 			match(ID);
+			setState(52);
+			match(T__6);
 			setState(53);
-			match(T__7);
-			setState(54);
 			match(DIGIT);
-			setState(55);
+			setState(54);
 			((ConvCheckContext)_localctx).op = _input.LT(1);
 			_la = _input.LA(1);
-			if ( !(_la==T__4 || _la==T__8) ) {
+			if ( !(_la==T__3 || _la==T__4) ) {
 				((ConvCheckContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 			}
 			else {
@@ -568,7 +566,7 @@ public class DimensionsParser extends Parser {
 				_errHandler.reportMatch(this);
 				consume();
 			}
-			setState(56);
+			setState(55);
 			match(ID);
 			}
 		}
@@ -588,26 +586,17 @@ public class DimensionsParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_datatype; }
-	 
-		public DatatypeContext() { }
-		public void copyFrom(DatatypeContext ctx) {
-			super.copyFrom(ctx);
-		}
-	}
-	public static class DTypeCheckContext extends DatatypeContext {
-		public Token tp;
-		public DTypeCheckContext(DatatypeContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof DimensionsListener ) ((DimensionsListener)listener).enterDTypeCheck(this);
+			if ( listener instanceof DimensionsListener ) ((DimensionsListener)listener).enterDatatype(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof DimensionsListener ) ((DimensionsListener)listener).exitDTypeCheck(this);
+			if ( listener instanceof DimensionsListener ) ((DimensionsListener)listener).exitDatatype(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof DimensionsVisitor ) return ((DimensionsVisitor<? extends T>)visitor).visitDTypeCheck(this);
+			if ( visitor instanceof DimensionsVisitor ) return ((DimensionsVisitor<? extends T>)visitor).visitDatatype(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -617,14 +606,12 @@ public class DimensionsParser extends Parser {
 		enterRule(_localctx, 12, RULE_datatype);
 		int _la;
 		try {
-			_localctx = new DTypeCheckContext(_localctx);
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(58);
-			((DTypeCheckContext)_localctx).tp = _input.LT(1);
+			setState(57);
 			_la = _input.LA(1);
-			if ( !(_la==T__9 || _la==T__10) ) {
-				((DTypeCheckContext)_localctx).tp = (Token)_errHandler.recoverInline(this);
+			if ( !(_la==T__7 || _la==T__8) ) {
+			_errHandler.recoverInline(this);
 			}
 			else {
 				if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
@@ -685,20 +672,20 @@ public class DimensionsParser extends Parser {
 			_localctx = new UnitCheckContext(_localctx);
 			enterOuterAlt(_localctx, 1);
 			{
+			setState(59);
+			match(T__9);
 			setState(60);
-			match(T__11);
-			setState(61);
 			match(ID);
-			setState(66);
+			setState(65);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while (_la==T__4 || _la==T__5) {
+			while (_la==T__3 || _la==T__4) {
 				{
 				{
-				setState(62);
+				setState(61);
 				((UnitCheckContext)_localctx).op = _input.LT(1);
 				_la = _input.LA(1);
-				if ( !(_la==T__4 || _la==T__5) ) {
+				if ( !(_la==T__3 || _la==T__4) ) {
 					((UnitCheckContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 				}
 				else {
@@ -706,16 +693,16 @@ public class DimensionsParser extends Parser {
 					_errHandler.reportMatch(this);
 					consume();
 				}
-				setState(63);
+				setState(62);
 				match(ID);
 				}
 				}
-				setState(68);
+				setState(67);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(69);
-			match(T__3);
+			setState(68);
+			match(T__10);
 			}
 		}
 		catch (RecognitionException re) {
@@ -730,25 +717,24 @@ public class DimensionsParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\25J\4\2\t\2\4\3\t"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\24I\4\2\t\2\4\3\t"+
 		"\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\3\2\7\2\24\n\2\f\2"+
 		"\16\2\27\13\2\3\2\3\2\3\3\3\3\5\3\35\n\3\3\3\3\3\3\4\3\4\3\4\3\4\3\5\3"+
-		"\5\3\5\3\5\3\5\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\5\6\65\n\6"+
-		"\3\7\3\7\3\7\3\7\3\7\3\7\3\b\3\b\3\t\3\t\3\t\3\t\7\tC\n\t\f\t\16\tF\13"+
-		"\t\3\t\3\t\3\t\2\2\n\2\4\6\b\n\f\16\20\2\5\3\2\7\b\4\2\7\7\13\13\3\2\f"+
-		"\r\2F\2\25\3\2\2\2\4\34\3\2\2\2\6 \3\2\2\2\b$\3\2\2\2\n\64\3\2\2\2\f\66"+
-		"\3\2\2\2\16<\3\2\2\2\20>\3\2\2\2\22\24\5\4\3\2\23\22\3\2\2\2\24\27\3\2"+
-		"\2\2\25\23\3\2\2\2\25\26\3\2\2\2\26\30\3\2\2\2\27\25\3\2\2\2\30\31\7\2"+
-		"\2\3\31\3\3\2\2\2\32\35\5\6\4\2\33\35\5\b\5\2\34\32\3\2\2\2\34\33\3\2"+
-		"\2\2\35\36\3\2\2\2\36\37\7\3\2\2\37\5\3\2\2\2 !\7\21\2\2!\"\7\4\2\2\""+
-		"#\5\n\6\2#\7\3\2\2\2$%\7\21\2\2%&\7\5\2\2&\'\5\n\6\2\'(\7\6\2\2(\t\3\2"+
-		"\2\2)*\5\16\b\2*+\5\20\t\2+\65\3\2\2\2,-\7\21\2\2-.\t\2\2\2./\7\21\2\2"+
-		"/\65\5\20\t\2\60\61\5\16\b\2\61\62\7\t\2\2\62\63\5\f\7\2\63\65\3\2\2\2"+
-		"\64)\3\2\2\2\64,\3\2\2\2\64\60\3\2\2\2\65\13\3\2\2\2\66\67\7\22\2\2\67"+
-		"8\7\n\2\289\7\17\2\29:\t\3\2\2:;\7\22\2\2;\r\3\2\2\2<=\t\4\2\2=\17\3\2"+
-		"\2\2>?\7\16\2\2?D\7\22\2\2@A\t\2\2\2AC\7\22\2\2B@\3\2\2\2CF\3\2\2\2DB"+
-		"\3\2\2\2DE\3\2\2\2EG\3\2\2\2FD\3\2\2\2GH\7\6\2\2H\21\3\2\2\2\6\25\34\64"+
-		"D";
+		"\5\3\5\3\5\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\5\6\64\n\6\3\7"+
+		"\3\7\3\7\3\7\3\7\3\7\3\b\3\b\3\t\3\t\3\t\3\t\7\tB\n\t\f\t\16\tE\13\t\3"+
+		"\t\3\t\3\t\2\2\n\2\4\6\b\n\f\16\20\2\4\3\2\6\7\3\2\n\13\2E\2\25\3\2\2"+
+		"\2\4\34\3\2\2\2\6 \3\2\2\2\b$\3\2\2\2\n\63\3\2\2\2\f\65\3\2\2\2\16;\3"+
+		"\2\2\2\20=\3\2\2\2\22\24\5\4\3\2\23\22\3\2\2\2\24\27\3\2\2\2\25\23\3\2"+
+		"\2\2\25\26\3\2\2\2\26\30\3\2\2\2\27\25\3\2\2\2\30\31\7\2\2\3\31\3\3\2"+
+		"\2\2\32\35\5\6\4\2\33\35\5\b\5\2\34\32\3\2\2\2\34\33\3\2\2\2\35\36\3\2"+
+		"\2\2\36\37\7\3\2\2\37\5\3\2\2\2 !\7\20\2\2!\"\7\4\2\2\"#\5\n\6\2#\7\3"+
+		"\2\2\2$%\7\20\2\2%&\7\5\2\2&\'\5\n\6\2\'\t\3\2\2\2()\5\16\b\2)*\5\20\t"+
+		"\2*\64\3\2\2\2+,\7\20\2\2,-\t\2\2\2-.\7\20\2\2.\64\5\20\t\2/\60\5\16\b"+
+		"\2\60\61\7\b\2\2\61\62\5\f\7\2\62\64\3\2\2\2\63(\3\2\2\2\63+\3\2\2\2\63"+
+		"/\3\2\2\2\64\13\3\2\2\2\65\66\7\21\2\2\66\67\7\t\2\2\678\7\16\2\289\t"+
+		"\2\2\29:\7\21\2\2:\r\3\2\2\2;<\t\3\2\2<\17\3\2\2\2=>\7\f\2\2>C\7\21\2"+
+		"\2?@\t\2\2\2@B\7\21\2\2A?\3\2\2\2BE\3\2\2\2CA\3\2\2\2CD\3\2\2\2DF\3\2"+
+		"\2\2EC\3\2\2\2FG\7\r\2\2G\21\3\2\2\2\6\25\34\63C";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

@@ -15,8 +15,9 @@ public class DimCheck extends DimensionsBaseVisitor<Object> {
       }
       else {
        String  temp = (String) visit(ctx.type());
+       dimTable.put(dimensionName,temp);
       }
-      return "Cona.";
+      return "";
    }
 
    @Override public Object visitAddUn(DimensionsParser.AddUnContext ctx) {
@@ -30,19 +31,37 @@ public class DimCheck extends DimensionsBaseVisitor<Object> {
    }
 
    @Override public Object visitTypeVars(DimensionsParser.TypeVarsContext ctx) {
+      
       return visitChildren(ctx);
    }
 
    @Override public Object visitTypeConversions(DimensionsParser.TypeConversionsContext ctx) {
-      return visitChildren(ctx);
+       if (visit(ctx.datatype() && visit(ctx.conversion()){
+          return true;
+       }
+       else{
+         ErrorHandling.printError(ctx, "Conversao invalida");
+         return false;
+       }
    }
 
+
    @Override public Object visitConvCheck(DimensionsParser.ConvCheckContext ctx) {
-      return visitChildren(ctx);
+      try {
+         Double d = Double.parseDouble(ctx.DIGIT().getText());
+         return Dimension.checkConversion(ctx.ID(0).getText(), ctx.ID(1).getText(), d);
+      } catch(ParserError e) {
+         
+      }
+      if(d != null) {
+      } else {
+         ErrorHandling.printError(ctx, "Digito Inválido!");
+      }
+
    }
 
    @Override public Object visitDTypeCheck(DimensionsParser.DTypeCheckContext  ctx) {
-      if (ctx.tp.equals("Real") ||ctx.tp.equals("Integer") ) {
+      if (ctx.tp.equals("real") ||ctx.tp.equals("integer") ) {
          return ctx.tp;
       }
       else {
@@ -53,6 +72,9 @@ public class DimCheck extends DimensionsBaseVisitor<Object> {
    @Override public Object visitUnitCheck(DimensionsParser.UnitCheckContext ctx) {
      String tmp =ctx.getText().replace("(","").replace(")","");
      return tmp;
-     }
    }
 }
+
+
+
+

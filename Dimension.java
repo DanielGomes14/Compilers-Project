@@ -22,22 +22,25 @@ public class Dimension extends Type{
 		 this.units.add(unit);
 		 this.conversions.put(unit,-1.0); //quick way to find out the first unit added, so that we can convert every unit to the first created
 	}
+	
 	@Override
 	public boolean isNumeric(){
-		return true;
+		return (this.primtype.equals("integer") || this.primtype.equals("real"));
 	}
+
 	@Override
 	public boolean conformsTo(Type other){
-		//first check if "this" and "other" are Dimensions
+	//first check if "this" and "other" are Dimensions
 		if(!other.getClass().getName().equals(this.getClass().getName())){ //Dimension Distance/Time/...
 			String otherprimtype=other.name(); //real ou int
 			//"Dist" / "Tempo"
+			
 			return ( super.conformsTo(other) || this.primtype.equals(otherprimtype) || this.primtype.equals(other.name) || this.name.equals(otherprimtype));
 		}
 		return false;
-	}	
-				//					real, cm= 100*m mm=1000*m dm=10  Dm=0.1*m  Hm=0.01*m km = 0.001*m
-				//					m             cm   100
+	}
+
+
 	public boolean checkConversion(String unit, String convertedunit ,double valuetoconvert){
 		if(conversions.get(unit)==null)return false;
 		if(conversions.get(unit)==-1){
@@ -71,3 +74,5 @@ public class Dimension extends Type{
 		return this.primtype;
 	}
 }
+
+

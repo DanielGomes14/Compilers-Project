@@ -38,3 +38,19 @@ Dist.addunit(mm=10*cm)
 
 
 import grandezas.txt
+
+
+
+	//first check if "this" and "other" are Dimensions
+		if(!other.getClass().getName().equals(this.getClass().getName())){ //Dimension Distance/Time/...
+			String otherprimtype=other.name(); //real ou int
+			//"Dist" / "Tempo"
+			return ( super.conformsTo(other) || this.primtype.equals(otherprimtype) || this.primtype.equals(other.name) || this.name.equals(otherprimtype));
+		}
+		return false;
+
+
+
+Duvidas ao stor:
+	- Como fazer input
+	- Que funções é suposto fazer

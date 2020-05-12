@@ -107,17 +107,15 @@ public interface DimensionsListener extends ParseTreeListener {
 	 */
 	void exitConvCheck(DimensionsParser.ConvCheckContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code DTypeCheck}
-	 * labeled alternative in {@link DimensionsParser#datatype}.
+	 * Enter a parse tree produced by {@link DimensionsParser#datatype}.
 	 * @param ctx the parse tree
 	 */
-	void enterDTypeCheck(DimensionsParser.DTypeCheckContext ctx);
+	void enterDatatype(DimensionsParser.DatatypeContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code DTypeCheck}
-	 * labeled alternative in {@link DimensionsParser#datatype}.
+	 * Exit a parse tree produced by {@link DimensionsParser#datatype}.
 	 * @param ctx the parse tree
 	 */
-	void exitDTypeCheck(DimensionsParser.DTypeCheckContext ctx);
+	void exitDatatype(DimensionsParser.DatatypeContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code unitCheck}
 	 * labeled alternative in {@link DimensionsParser#unit}.

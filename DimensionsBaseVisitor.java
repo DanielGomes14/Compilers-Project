@@ -76,7 +76,7 @@ public class DimensionsBaseVisitor<T> extends AbstractParseTreeVisitor<T> implem
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitDTypeCheck(DimensionsParser.DTypeCheckContext ctx) { return visitChildren(ctx); }
+	@Override public T visitDatatype(DimensionsParser.DatatypeContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

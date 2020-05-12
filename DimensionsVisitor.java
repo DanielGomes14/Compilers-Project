@@ -70,12 +70,11 @@ public interface DimensionsVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitConvCheck(DimensionsParser.ConvCheckContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code DTypeCheck}
-	 * labeled alternative in {@link DimensionsParser#datatype}.
+	 * Visit a parse tree produced by {@link DimensionsParser#datatype}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitDTypeCheck(DimensionsParser.DTypeCheckContext ctx);
+	T visitDatatype(DimensionsParser.DatatypeContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code unitCheck}
 	 * labeled alternative in {@link DimensionsParser#unit}.
