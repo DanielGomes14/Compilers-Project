@@ -1,0 +1,6 @@
+Length -> real(m);
+Time -> int (s);
+Velocity -> Length/Time (m/s);
+Length addUnit(cm,100*m);
+cm->100
+
