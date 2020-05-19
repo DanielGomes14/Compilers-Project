@@ -10,12 +10,17 @@ public class DimCheck extends DimensionsBaseVisitor<Object> {
 
    @Override public Object visitDeclar(DimensionsParser.DeclarContext ctx) {
       String dimensionName = ctx.DIMID().getText();
-      if(DimensionsParser.dimTable.containsKey(dimensionName)){
+      if(DimensionsParser.symbolTable.containsKey(dimensionName)){
          ErrorHandling.printError(ctx, "Dimension" + dimensionName+ "already defined");
       }
       else {
-       String  temp = (String) visit(ctx.type());
-       dimTable.put(dimensionName,temp);
+         String type = (String) visit(ctx.type());
+         String[] types = type.split(" ");
+         String datatype = types[0];
+         String unit = types[1];
+         Dimension d = new Dimension(dimensionName, datatype, unit);
+         Symbol s = new Symbol(dimensionName, d);
+         DimensionParser.symbolTable.put(dimensionName,s);
       }
       return "";
    }
@@ -27,16 +32,28 @@ public class DimCheck extends DimensionsBaseVisitor<Object> {
    @Override public Object visitTypeNormal(DimensionsParser.TypeNormalContext ctx) {
       String datatype = visit(ctx.datatype());
       String unit = visit(ctx.unit());
-      return null;
+      if(datatype != null) {
+         datatype = datatype + " ";
+         typefinal = datatype + unit;
+      } else {
+         ErrorHandling.printError(ctx, "Datatype invalid!");
+      }
+      return typefinal;
    }
 
    @Override public Object visitTypeVars(DimensionsParser.TypeVarsContext ctx) {
-      
-      return visitChildren(ctx);
+      String dimensionName1 = ctx.DIMID(0).getText();
+      String dimensionName2 = ctx.DIMID(1).getText();
+      String unit = (String) visit(ctx.unit());
+      if(DimensionsParser.dimTable.containsKey(dimensionName1) && DimensionsParser.dimTable.containsKey(dimensionName2) && Dimension.checkUnit(unit)) {
+         String datatype = dimensionName1 + ctx.op.getText() + dimensionName2;
+         String finaltype = datatype + " " + unit;
+      }
+      return finaltype;
    }
 
    @Override public Object visitTypeConversions(DimensionsParser.TypeConversionsContext ctx) {
-       if (visit(ctx.datatype() && visit(ctx.conversion()){
+       if (visit(ctx.datatype()) && visit(ctx.conversion()){
           return true;
        }
        else{
@@ -49,11 +66,12 @@ public class DimCheck extends DimensionsBaseVisitor<Object> {
    @Override public Object visitConvCheck(DimensionsParser.ConvCheckContext ctx) {
       try {
          Double d = Double.parseDouble(ctx.DIGIT().getText());
-         return Dimension.checkConversion(ctx.ID(0).getText(), ctx.ID(1).getText(), d);
-      } catch(ParserError e) {
-         
+      } catch(ParseException e) {
+         System.out.println("Error in parsing double!");
+         e.printStackTrace();
       }
-      if(d != null) {
+      if( d != null) {
+         return Dimension.checkConversion(ctx.ID(0).getText(), ctx.ID(1).getText(), d);
       } else {
          ErrorHandling.printError(ctx, "Digito Inválido!");
       }
@@ -61,12 +79,12 @@ public class DimCheck extends DimensionsBaseVisitor<Object> {
    }
 
    @Override public Object visitDTypeCheck(DimensionsParser.DTypeCheckContext  ctx) {
-      if (ctx.tp.equals("real") ||ctx.tp.equals("integer") ) {
+      if (ctx.tp.getText().equals("real") ||ctx.tp.getText()equals("integer") ) {
          return ctx.tp;
       }
       else {
          ErrorHandling.printError(ctx, "Primitive Type" + ctx.tp + "Not Found!");
-         return false;
+         return null;
       }
    }
    @Override public Object visitUnitCheck(DimensionsParser.UnitCheckContext ctx) {

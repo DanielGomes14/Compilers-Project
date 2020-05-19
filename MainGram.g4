@@ -22,11 +22,12 @@ stat: print
 
 print: 'println' expr  #checkPrint;
 
-declaration: type idList     #dec;
+
 
 assignment: declaration '=' expr  #decAssign
           | idList '=' expr      #Assign
             ;
+declaration: type idList     #dec;
 
 conditionalstat: conditional 
                | forloop       

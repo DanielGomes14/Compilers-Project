@@ -43,14 +43,14 @@ public class Dimension extends Type{
 
 	public boolean checkConversion(String unit, String convertedunit ,double valuetoconvert){
 		if(conversions.get(unit)==null)return false;
-		if(conversions.get(unit)==-1){
+		if(conversions.get(unit)==-1){ //comparam nova unidade em relaçao a unidade base
 			if(checkUnit(convertedunit)){
 				units.add(convertedunit);
 			}
 			conversions.put(convertedunit,valuetoconvert);
 			return true;
 		} 
-		else{
+		else{  //comparar nova unidade em relaçao a unidade criada por utilizador
 			double finalval= valuetoconvert* conversions.get(unit);
 			if(checkUnit(convertedunit)){
 				units.add(convertedunit);

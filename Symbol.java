@@ -1,5 +1,10 @@
-public abstract class Symbol
-{
+public  class Symbol {
+   protected final String name;
+   protected final Type type;
+   protected Value value;
+   protected boolean valueDefined;
+   protected String varName;
+
    public Symbol(String name, Type type) {
       assert name != null;
       assert type != null;
@@ -49,10 +54,6 @@ public abstract class Symbol
      return "Symbol" + this.name + "," + this.type;
    }
 
-   protected final String name;
-   protected final Type type;
-   protected Value value;
-   protected boolean valueDefined;
-   protected String varName;
+
 }
 
