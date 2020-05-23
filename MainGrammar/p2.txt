@@ -1,0 +1,47 @@
+println 1+1;
+string d1; //declaração de variavel de tipo string
+d1 = "ola";  //inicialização
+integer d2 = 2^3; 
+boolean flag1,flag2 = false; //declaração e inicialização  de varias variaveis do mesmo tipo com mesmo valor
+
+real d3 = d2 * 1;
+
+if ( d2 != d3 ) //operacao condicional if
+{
+   println("Diferentes");
+   if ( d1 == "ola" ) 
+   {
+       println("strings iguais");
+       flag2=true;
+   };
+}
+else if ( d1 > d3 ) 
+{
+    println("maiores");
+}
+else
+{
+    println("menores");
+};
+
+
+for (integer var1 = 0 ; var1 <= 10 ; var1++ )
+{
+    var1=var1+1;
+    while ( d2 >= 50 )
+    {
+        println("Valor de  d2: " + d2);          // imprimir concatenação da string "Valor de d2:" com o valor concreto de d2
+    };
+};
+
+
+string prompt = scan( "Enter something" );      // ler do utilizador o valor para prompt
+
+
+// This a single line comment
+/*
+this is 
+a 
+multi-line
+comment
+*/

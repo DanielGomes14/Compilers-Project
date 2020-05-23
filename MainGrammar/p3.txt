@@ -1,0 +1,13 @@
+import p1 ; // abrir ficheiro que contem dimensões
+
+
+Length d1 = 1; 
+Length d2 = 100;
+if (d1*100 == 100)
+{
+    println("Iguais!");
+}
+else 
+{
+    println("Diferentes!");
+};
