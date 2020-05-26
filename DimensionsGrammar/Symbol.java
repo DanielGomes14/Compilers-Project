@@ -5,16 +5,13 @@ public  class Symbol {
    protected Value value;
    protected boolean valueDefined;
    protected String varName;
-   protected String dimensionName;
-   protected String unitName;
+
    public Symbol(String name, Type type) {
       assert name != null;
       assert type != null;
 
       this.name = name;
       this.type = type;
-      this.dimensionName = "noDim";
-      this.unitName = "noUnit";
    }
 
    public void setValue(Value value) {
@@ -31,13 +28,6 @@ public  class Symbol {
       assert varName != null;
 
       this.varName = varName;
-   }
-   public void setDim(String dimName){
-      this.dimensionName = dimName;
-   }
-
-   public void setUnit(String unitName){
-      this.unitName = unitName;
    }
 
    public String varName(){

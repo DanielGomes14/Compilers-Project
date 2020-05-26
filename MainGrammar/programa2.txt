@@ -1,0 +1,18 @@
+/* Uma caixa de 100 gramas é colocada num pote de 2 litros, pretende-se se saber qual o nuúmero de vezes que podem ser colocadas caixas de 100 gramas
+até que a densidade seja igual ou superior a 1. 
+*/
+
+import dimensoes2 ; // abrir ficheiro que contem dimensões
+
+
+Volume v = 2 (l); 
+Massa m =  100 (g);
+Densidade d;
+integer counter = 0;
+while ( d < 1)
+{
+    d = v / m;
+    m = m + 50 ;
+    counter ++ ;
+};
+println("Numero de ciclos:" +  counter);

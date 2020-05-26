@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 public class DimCheck extends DimensionsBaseVisitor<Object> {
 
    @Override public Object visitProg(DimensionsParser.ProgContext ctx) {
@@ -10,25 +11,55 @@ public class DimCheck extends DimensionsBaseVisitor<Object> {
 
    @Override public Object visitDeclar(DimensionsParser.DeclarContext ctx) {
       String dimensionName = ctx.DIMID().getText();
-      if(DimensionsParser.symbolTable.containsKey(dimensionName)){
-         ErrorHandling.printError(ctx, "Dimension" + dimensionName+ "already defined");
+      String primType;
+      String unit;
+      Dimension d;
+      Symbol s;
+      String[] dimensions;
+      
+      if(ctx.getChildCount() == 2) {
+
+         String datatype = visit(ctx.datatype());
+         String unit = visit(ctx.unit());
+
+         if(datatype==null || unit==null){
+            ErrorHandling.printError(ctx, "The declaration was invalid");
+         }
+         else {
+
+            
+
+            // DimensionsParser.dimTable.containsKey(dimensionName1)
+         }
+
+
+
+      } else {
+         if ( ctx.getChildCount() == 3) {
+            
+         } else {
+            ErrorHandling.printError(ctx, "Not allowed to make conversions!");
+         }
       }
-      else {
-         String type = (String) visit(ctx.type());
-         String[] types = type.split(" ");
-         String datatype = types[0];
-         String unit = types[1];
-         Dimension d = new Dimension(dimensionName, datatype, unit);
-         Symbol s = new Symbol(dimensionName, d);
-         DimensionParser.symbolTable.put(dimensionName,s);
-      }
+         
       return "";
    }
 
-   @Override public Object visitAddUn(DimensionsParser.AddUnContext ctx) {
-      return visitChildren(ctx);
-   }
+   @Override public Object visitAddUn(DimensionsParser.AddUnContext ctx) {//conversion 
 
+      if(ctx.datatype()!=null){
+         ErrorHandling.printError(ctx, "Impossivel fazer essa conversao!");
+      }
+      else if(ctx.DIMID(0)!=null){
+         ErrorHandling.printError(ctx, "Impossivel fazer essa conversao!");
+      }
+      else{
+         //String s = ctx.ID(0).getText() + "=" + ctx.DIGIT().getText() + ctx.op + ctx.ID(1).getText();
+
+         String conv = visit(ctx.conversion());
+         String[]conv.split("=");
+      }
+   }
    @Override public Object visitTypeNormal(DimensionsParser.TypeNormalContext ctx) {
       String datatype = visit(ctx.datatype());
       String unit = visit(ctx.unit());
@@ -44,23 +75,22 @@ public class DimCheck extends DimensionsBaseVisitor<Object> {
    @Override public Object visitTypeVars(DimensionsParser.TypeVarsContext ctx) {
       String dimensionName1 = ctx.DIMID(0).getText();
       String dimensionName2 = ctx.DIMID(1).getText();
-      String unit = (String) visit(ctx.unit());
-      if(DimensionsParser.symbolTable.containsKey(dimensionName1) && DimensionsParser.symbolTable.containsKey(dimensionName2) && Dimension.checkUnit(unit)) {
+      if(DimensionsParser.dimTable.containsKey(dimensionName1) && DimensionsParser.dimTable.containsKey(dimensionName2)) {
          String datatype = dimensionName1 + ctx.op.getText() + dimensionName2;
-         String finaltype = datatype + " " + unit;
       } else {
          ErrorHandling.printError(ctx, "Dimension is not defined!");
       }
-      return finaltype;
+      return datatype;
    }
 
    @Override public Object visitTypeConversions(DimensionsParser.TypeConversionsContext ctx) {
-       if (visit(ctx.datatype()) != null && visit(ctx.conversion()){
-          return true;
+      String conversion = visit(ctx.conversion);
+       if (conversion != null){
+          return conversion;
        }
        else{
          ErrorHandling.printError(ctx, "Conversao invalida");
-         return false;
+         return null;
        }
    }
 
@@ -73,9 +103,11 @@ public class DimCheck extends DimensionsBaseVisitor<Object> {
          e.printStackTrace();
       }
       if( d != null) {
-         return Dimension.checkConversion(ctx.ID(0).getText(), ctx.ID(1).getText(), d);
+         String s = ctx.ID(0).getText() + "=" + ctx.DIGIT().getText() + ctx.op + ctx.ID(1).getText();
+         return s;
       } else {
          ErrorHandling.printError(ctx, "Digito Inválido!");
+         return null;
       }
 
    }

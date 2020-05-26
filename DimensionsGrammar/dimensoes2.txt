@@ -1,0 +1,4 @@
+Massa -> real (kg);
+Volume -> real (l);
+Densidade -> Massa/Volume;
+Massa -> addUnit g = 1000*kg;

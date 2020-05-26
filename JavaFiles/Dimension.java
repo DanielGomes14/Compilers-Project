@@ -49,15 +49,6 @@ public class Dimension extends Type{
 			return true;
 		}
 	}
-	public boolean conformsTo(Type other) {
-		if(super.conformsTo(other)) {
-			return true;
-		} else if (other.isNumeric() && this.isNumeric()) {
-			return true
-		}
-		return false;
-		
-	}
 
 	public boolean checkUnit(String unit){
 		for(int i = 0; i< units.size();i++){
@@ -71,13 +62,6 @@ public class Dimension extends Type{
 	}
 	public String getPrimType(){
 		return this.primtype;
-	}
-	public String getBaseUnit() {
-		for(String s : units) {
-			if( conversion.get(s) == -1) {
-				return s;
-			}
-		}
 	}
 }
 

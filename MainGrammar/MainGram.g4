@@ -17,6 +17,7 @@ stat: print                           //tipo de expressoes possiveis
     | declaration
     | assignment
     | conditionalstat
+    | increment
     ;
 
 print: 'println' expr  #checkPrint;                                                         //esrever texto ou variaveis
@@ -57,7 +58,7 @@ type returns[Type res]:                                                         
    | DIMID     #DimensionType              
    ;
 
-expr returns[Type eType,String varName]:                                                     //expressoes possiveis(operacoes, comparacoes ou respetivos tipos de variavel)
+expr returns[Type eType, String varName, String dim, String unit]:                                                     //expressoes possiveis(operacoes, comparacoes ou respetivos tipos de variavel)
      <assoc=right> e1=expr '^' e2=expr              #powExpr
     | sign=('+'|'-') e=expr                         #signExpr
     | '!' e=expr                                    #notExpr 
@@ -68,17 +69,20 @@ expr returns[Type eType,String varName]:                                        
     | '(' e=expr ')'                                #parenExpr
     | increment                                     #incrExpr
     | input                                         #inputExpr
-    | REAL                                          #realExpr
-    | INTEGER                                       #integerExpr
+    | ID                                            #idExpr
+    | REAL   unit?                                       #realExpr
+    | INTEGER unit?                                      #integerExpr
     | BOOLEAN                                       #booleanExpr
     | STRING                                        #strExpr
-    | ID                                            #idExpr
+   
     ;
 
+unit: '(' ID (op=('*'|'/') ID)*  ')'            #unitCheck ;  
+
 BOOLEAN: 'true' | 'false';                      //tipo boolean
-DIMID: [A-Z]LETTER+;    
-LETTER: [a-zA-Z];                         
-ID: [a-zA-Z_][a-zA-Z_0-9]*;                     //nomes variaveis 
+DIMID: [A-Z]LETTER+;                        //nomes Dimensoes
+ID: LETTER ( LETTER | INTEGER )*;                    //nomes variaveis 
+LETTER: [a-zA-Z_];                              
 REAL: [0-9]+ '.' [0-9]*;                        //tipo real
 INTEGER: [0-9]+;                                //tipo integer
 COMMENT:'//' .*? '\n' -> skip;                  //comentario apenas para uma linha

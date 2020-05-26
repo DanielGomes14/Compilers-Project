@@ -6,7 +6,7 @@ import java.util.HashMap;
 }
 
 @parser::members {
-    static protected Map<String,Dimension> dimTable = new HashMap<>();
+static protected Map<String,Dimension> dimTable = new HashMap<>();                                          // ( m, Length )
 }
 
 program: (stats)* EOF                           #Prog ;          
@@ -14,9 +14,9 @@ stats: (declaration| addunit) ';'               #Stat ;             //
 declaration: DIMID  '->' type                   #Declar ;           //DIMID=grandeza a definir, type=tipo de var e unidades
 addunit: DIMID '-> addUnit' type                #addUn;             //DIMID=grandeza a definir, type=tipo de var e unidades
 
-type: datatype unit                             #TypeNormal         //definir grandezas base(que nao tem do mesmo tipo ja definido)
-| DIMID  op =('*'|'/') DIMID                    #TypeVars           //
-| conversion                                    #TypeConversions    //converter ordens de grandeza
+type: datatype unit                             #TypeNormal         //declaration:definir grandezas base(que nao tem do mesmo tipo ja definido)     ( integer m/s )
+| DIMID  op =('*'|'/') DIMID                    #TypeVars           //declaration                                                                   ( Velocidade=Distance/Time )
+| conversion                                    #TypeConversions    //addunit:converter ordens de grandeza                                          ( cm=200*m )
 ;
 
 
@@ -24,7 +24,7 @@ conversion:ID '=' DIGIT op=('*' | '/' ) ID      #ConvCheck ;        //qual nome 
 
 datatype: 'real' | 'integer'                    #DTypeCheck ;       //tipos de dados primitivos
 
-unit: '(' ID (op=('*'|'/') ID)*  ')'            #unitCheck ;        //unidades (ex: m, cm, s, ms, etc)
+unit: '(' ID (op=('*'|'/') ID)*  ')'            #unitCheck ;        //unidades (ex: m, cm, s, m/s, etc)
 
 
 
