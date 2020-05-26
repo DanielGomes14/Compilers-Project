@@ -53,7 +53,7 @@ public class Dimension extends Type{
 		if(super.conformsTo(other)) {
 			return true;
 		} else if (other.isNumeric() && this.isNumeric()) {
-			return true
+			return true;
 		}
 		return false;
 		

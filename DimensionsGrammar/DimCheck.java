@@ -57,7 +57,46 @@ public class DimCheck extends DimensionsBaseVisitor<Object> {
          //String s = ctx.ID(0).getText() + "=" + ctx.DIGIT().getText() + ctx.op + ctx.ID(1).getText();
 
          String conv = visit(ctx.conversion());
-         String[]conv.split("=");
+         String[] sepequal = conv.split("=");
+         String[] sepmult = sepequal[1].split("*");
+         String[] sepdiv = sepequal[1].split("\\");
+         Dimension dim;
+         String unitName;
+         String primtype;
+         if(sepmult.length==2){
+               try{
+                  dim.checkConversion(sepequal[0],sepmult[1],Double.parseDouble(sepmult[0]));
+                  if(Dimensions.dimTable.containsKey(sepdiv[1])){
+                     primtype=Dimensions.dimTable.getValue(sepdiv[1]).getPrimType();
+                     unitName=Dimensions.dimTable.getValue(sepdiv[1]).getUnits();
+
+                  }
+               }
+               catch(Exception e){
+                  ErrorHandling.printError(ctx, "Valor de conversao invalido!");
+               }
+
+            }
+         else if(sepdiv.length==2){
+            try{
+               if(Dimensions.dimTable.containsKey(sepdiv[1])){
+                  if(Dimensions.dimTable.containsKey(sepdiv[1])){
+                     primtype=Dimensions.dimTable.getValue(sepdiv[1]).getPrimType();
+                     unitName=Dimensions.dimTable.getValue(sepdiv[1]).getUnits();
+
+                  }
+               }
+                  dim.checkConversion(sepequal[0],sepdiv[1],1/Double.parseDouble(sepdiv[0]));
+            }
+            catch(Exception e){
+               ErrorHandling.printError(ctx, "Valor de conversao invalido!");
+            }
+         }
+         else{
+            ErrorHandling.printError(ctx, "Operacao errada na conversao!");
+         }
+         dim = new Dimension(unitName,primtype,sepequal[0]);
+
       }
    }
    @Override public Object visitTypeNormal(DimensionsParser.TypeNormalContext ctx) {
