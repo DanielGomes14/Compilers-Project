@@ -212,43 +212,61 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
 
    @Override
    public Object visitIncrement(MainGramParser.IncrementContext ctx) {
+      String var = ctx.ID().getText();
       boolean validation=true;
-      if(MainGramParser.symbolTable.containsKey(ctx.ID())){
-         Symbol s = MainGramParser.symbolTable.get(ctx.ID());
-         if(!s.type.isNumeric()){
-            ErrorHandling.printError(ctx, "Cannot increment or decrement a not numeric Expression");
+      if(MainGramParser.symbolTable.containsKey(var)){
+         Symbol sb = MainGramParser.symbolTable.get(var);
+         if(!sb.type().isNumeric()){
+            ErrorHandling.printError(ctx, "Cannot use operator \"" + ctx.incre + "\"for non numeric type");
             validation=false;
          }
-      }
-      else{
-         validation=false;
-      }
-      return validation;
+         if(!sb.type().conformsTo(integerType)){
+            ErrorHandling.printError(ctx, "Cannot use operator \"" + ctx.incre + "\"for type real");
+            validation=false;
+         }
+         if(!sb.valueDefined()){
+            ErrorHandling.printError(ctx, "Variable \"" + sb.name() + "\" was not initialized");
+            validation=false;
+         }
+    }
+    else{
+      ErrorHandling.printError(ctx, "Variable \"" + var+ "\" not defined");
+      validation=false;
+    }
+    return validation;
    }
 
    @Override
    public Object visitTypeInt(MainGramParser.TypeIntContext ctx) {
-      return visitChildren(ctx);
+      return true;
    }
 
    @Override
    public Object visitTypeReal(MainGramParser.TypeRealContext ctx) {
-      return visitChildren(ctx);
+      return true;
    }
 
    @Override
    public Object visitTypeBool(MainGramParser.TypeBoolContext ctx) {
-      return visitChildren(ctx);
+      return true;
    }
 
    @Override
    public Object visitTypeStr(MainGramParser.TypeStrContext ctx) {
-      return visitChildren(ctx);
+      return true;
    }
 
    @Override
    public Object visitDimensionType(MainGramParser.DimensionTypeContext ctx) {
-      return visitChildren(ctx);
+      String dimname=ctx.DIMID.getText();
+      if(MainGramParser.dimTable.containsKey(dimname)){
+         ctx.res=MainGramParser.dimTable.get(dimname);
+         return true;
+      }
+      else{
+         ErrorHandling.printError(ctx, "Dimension \"" + dimname + "\" not found!");
+      return false;
+      }
    }
 
    @Override
@@ -268,17 +286,54 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
 
    @Override
    public Object visitIntegerExpr(MainGramParser.IntegerExprContext ctx) {
-      return visitChildren(ctx);
+      boolean validation = true;
+      ctx.eType=integerType;
+      if (ctx.unit()!=null){
+            validation=(boolean) visit(ctx.unit());
+            if(validation){
+               ctx.unit=ctx.unit().getText().replace("(","").replace(")","");
+
+            }
+            else{
+               ErrorHandling.printError(ctx, "Invalid Unit");
+            }
+      }
+      else{
+         ctx.dim="NoDim";
+         ctx.unit="NoUnit";
+      }
+
+      return validation;
    }
 
    @Override
    public Object visitRealExpr(MainGramParser.RealExprContext ctx) {
-      return visitChildren(ctx);
+      boolean validation = true;
+      ctx.eType=realType;
+      if (ctx.unit()!=null){
+            validation=(boolean) visit(ctx.unit());
+            if(validation){
+               ctx.unit=ctx.unit().getText().replace("(","").replace(")","");
+
+            }
+            else{
+               ErrorHandling.printError(ctx, "Invalid Unit");
+            }
+      }
+      else{
+         ctx.dim="NoDim";
+         ctx.unit="NoUnit";
+      }
+
+      return validation;
    }
 
    @Override
    public Object visitBooleanExpr(MainGramParser.BooleanExprContext ctx) {
-      return visitChildren(ctx);
+      ctx.eType=booleanType;
+      ctx.Dim="noDim";
+      ctx.Unit="NoUnit";
+      return true;
    }
 
    @Override
@@ -286,14 +341,16 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
       return visitChildren(ctx);
    }
 
-   @Override
-   public Object visitIncrExpr(MainGramParser.IncrExprContext ctx) {
-      return visitChildren(ctx);
-   }
-
+   
    @Override
    public Object visitParenExpr(MainGramParser.ParenExprContext ctx) {
-      return visitChildren(ctx);
+      boolean validation = (boolean)visit(ctx.expr());
+      if(validation){
+         ctx.eType=ctx.expr().eType;
+         ctx.dim=ctx.expr().dim;
+         ctx.unit=ctx.expr().unit;
+      }
+      return validation;
    }
 
    @Override
@@ -303,7 +360,20 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
 
    @Override
    public Object visitNotExpr(MainGramParser.NotExprContext ctx) {
-      return visitChildren(ctx);
+      boolean validation= (boolean) visit(ctx.expr());
+      if(validation){
+         //check if type of the context of expr() is boolean
+            if(ctx.expr().eType.conformsTo(booleanType)){
+               ctx.eType=booleanType;
+               //boolean expressions dont have a dimension or unit associated
+               ctx.dim="NoDim";
+               ctx.unit="NoUnit";
+            }
+            else{
+               ErrorHandling.printError(ctx,"Cannot use operator '!' for a non boolean expression");
+            }
+      }
+      return validation;
    }
 
    @Override
@@ -323,26 +393,26 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
 
    @Override
    public Object visitIdExpr(MainGramParser.IdExprContext ctx) {
-      boolean res=true;
+      boolean validation=true;
       String id = ctx.ID().getText();
       if(MainGramParser.symbolTable.containsKey(id)){
          Symbol sb = MainGramParser.symbolTable.get(id);
-         if(sym.valueDefined()){
+         if(sb.valueDefined()){
             ctx.eType=sb.type();
             ctx.unit=sb.unitName;
             ctx.dim=sb.dimensionName;
          }
          else{
             ErrorHandling.printError(ctx, "Variable \"" + id + "\"  has no value associated");
-            res=false;
+            validation=false;
          }
       }
       else{
          ErrorHandling.printError(ctx, "Variable \"" + id + "\"  not found");
-         res=false;
+         validation=false;
       }
-      
-      return visitChildren(ctx);
+   
+      return validation;
    }
 
    @Override

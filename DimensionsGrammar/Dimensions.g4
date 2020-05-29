@@ -20,15 +20,16 @@ type: datatype unit                             #TypeNormal         //declaratio
 ;
 
 
-conversion:ID '=' DIGIT op=('*' | '/' ) ID      #ConvCheck ;        //qual nome da unidade de conversao e respetiva escala em relaçao a ordem de grandeza definida anteriormente
+conversion:ID '=' number op=('*' | '/' ) ID      #ConvCheck ;        //qual nome da unidade de conversao e respetiva escala em relaçao a ordem de grandeza definida anteriormente
 
 datatype: 'real' | 'integer'                    #DTypeCheck ;       //tipos de dados primitivos
 
 unit: '(' ID (op=('*'|'/') ID)*  ')'            #unitCheck ;        //unidades (ex: m, cm, s, m/s, etc)
 
+number: INTEGER | REAL;
 
-
-DIGIT: [0-9]+;
+REAL: [0-9]+ '.' [0-9]*;                        
+INTEGER: [0-9]+; 
 DIMID: [A-Z]LETTER+;                                                //Obrigar que o nome da dimensao seja comecado por maiuscula e ser mais que uma letra
 ID: LETTER+;
 LETTER: [a-zA-Z];

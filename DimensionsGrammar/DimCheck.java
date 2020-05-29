@@ -1,107 +1,109 @@
 import java.util.ArrayList;
+import java.text.ParseException;
 public class DimCheck extends DimensionsBaseVisitor<Object> {
 
-   @Override public Object visitProg(DimensionsParser.ProgContext ctx) {
-      return visitChildren(ctx);
-   }
-
-   @Override public Object visitStat(DimensionsParser.StatContext ctx) {
-      return visitChildren(ctx);
-   }
-
    @Override public Object visitDeclar(DimensionsParser.DeclarContext ctx) {
-      String dimensionName = ctx.DIMID().getText();
-      String primType;
-      String unit;
+      String dimensionName = (String)ctx.DIMID().getText();
+      boolean validation = false;
       Dimension d;
       Symbol s;
-      String[] dimensions;
       
-      if(ctx.getChildCount() == 2) {
+      if(ctx.type().getChildCount() == 2) {
 
-         String datatype = visit(ctx.datatype());
-         String unit = visit(ctx.unit());
-
-         if(datatype==null || unit==null){
-            ErrorHandling.printError(ctx, "The declaration was invalid");
+         String type = (String)visit(ctx.type());
+         String[] subtype = type.split(" ");
+         String datatype = subtype[0];
+         String unit = subtype[1];
+         if(unit==null){
+            ErrorHandling.printError(ctx, "The declaration or unit was invalid");
+            validation = false;
          }
          else {
+            if (DimensionsParser.dimTable.containsKey(dimensionName)) {
+               ErrorHandling.printError(ctx, "Dimension already exists");
+               validation =false;
+            } else {
 
-            
-
-            // DimensionsParser.dimTable.containsKey(dimensionName1)
+               d = new Dimension(dimensionName, datatype, unit);
+               DimensionsParser.dimTable.put(dimensionName, d);
+               validation =true;
+            } 
          }
 
-
-
-      } else {
-         if ( ctx.getChildCount() == 3) {
-            
+      } else if ( ctx.type().getChildCount() == 3){
+         String type = (String)visit(ctx.type());
+         String[] subtype ;
+         char op;
+         if(type.contains("/")) {
+            subtype = type.split("/");
+            op = '/';
          } else {
-            ErrorHandling.printError(ctx, "Not allowed to make conversions!");
+            subtype = type.split("*");
+            op = '*';
          }
+         String dimensionName1 = subtype[0];
+         String dimensionName2 = subtype[1];
+
+         if( dimensionName1 == null || dimensionName2 == null) {
+            ErrorHandling.printError(ctx, "Dimension invalid");
+         } else {
+            Dimension dimension1 = DimensionsParser.dimTable.get(dimensionName1);
+            Dimension dimension2 = DimensionsParser.dimTable.get(dimensionName2);
+            d = new Dimension(dimensionName, dimension1.getPrimType() + op + dimension2.getPrimType(), dimension1.getBaseUnit()+ op+ dimension2.getBaseUnit());
+            DimensionsParser.dimTable.put(dimensionName, d);
+            validation =true;
+         }
+      } else {
+         ErrorHandling.printError(ctx, "Not allowed to make conversions!");
+         validation =false;
       }
          
-      return "";
+      return validation;
    }
 
    @Override public Object visitAddUn(DimensionsParser.AddUnContext ctx) {//conversion 
-
-      if(ctx.datatype()!=null){
+      boolean validation=true;
+      if(ctx.getChildCount()!=1){
          ErrorHandling.printError(ctx, "Impossivel fazer essa conversao!");
+         validation=false;
       }
-      else if(ctx.DIMID(0)!=null){
-         ErrorHandling.printError(ctx, "Impossivel fazer essa conversao!");
+
+      String conv = (String) visit(ctx.type());
+      String[] sepequal = conv.split("=");//0-nome da unidade
+      String[] sepmult = sepequal[1].split("*");//0-valor 1-base
+      String[] sepdiv = sepequal[1].split("/");//0-valor 1-base
+      Dimension dim;
+      String unitName="";
+      String primtype="";
+      Double ratio=0.0;
+      if(sepmult.length==2){
+               ratio = Double.parseDouble(sepmult[0]);
+               if(DimensionsParser.dimTable.containsKey(sepdiv[1])){
+                  primtype=DimensionsParser.dimTable.get(sepdiv[1]).getPrimType();
+                  unitName=DimensionsParser.dimTable.get(sepdiv[1]).getBaseUnit();
+               }
+         }
+      else if(sepdiv.length==2){
+            if(DimensionsParser.dimTable.containsKey(sepdiv[1])){
+               if(DimensionsParser.dimTable.containsKey(sepdiv[1])){
+                  primtype=DimensionsParser.dimTable.get(sepdiv[1]).getPrimType();
+                  unitName=DimensionsParser.dimTable.get(sepdiv[1]).getBaseUnit();
+               }
+            }
+               ratio = 1/Double.parseDouble(sepdiv[0]);
       }
       else{
-         //String s = ctx.ID(0).getText() + "=" + ctx.DIGIT().getText() + ctx.op + ctx.ID(1).getText();
-
-         String conv = visit(ctx.conversion());
-         String[] sepequal = conv.split("=");
-         String[] sepmult = sepequal[1].split("*");
-         String[] sepdiv = sepequal[1].split("\\");
-         Dimension dim;
-         String unitName;
-         String primtype;
-         if(sepmult.length==2){
-               try{
-                  dim.checkConversion(sepequal[0],sepmult[1],Double.parseDouble(sepmult[0]));
-                  if(Dimensions.dimTable.containsKey(sepdiv[1])){
-                     primtype=Dimensions.dimTable.getValue(sepdiv[1]).getPrimType();
-                     unitName=Dimensions.dimTable.getValue(sepdiv[1]).getUnits();
-
-                  }
-               }
-               catch(Exception e){
-                  ErrorHandling.printError(ctx, "Valor de conversao invalido!");
-               }
-
-            }
-         else if(sepdiv.length==2){
-            try{
-               if(Dimensions.dimTable.containsKey(sepdiv[1])){
-                  if(Dimensions.dimTable.containsKey(sepdiv[1])){
-                     primtype=Dimensions.dimTable.getValue(sepdiv[1]).getPrimType();
-                     unitName=Dimensions.dimTable.getValue(sepdiv[1]).getUnits();
-
-                  }
-               }
-                  dim.checkConversion(sepequal[0],sepdiv[1],1/Double.parseDouble(sepdiv[0]));
-            }
-            catch(Exception e){
-               ErrorHandling.printError(ctx, "Valor de conversao invalido!");
-            }
-         }
-         else{
-            ErrorHandling.printError(ctx, "Operacao errada na conversao!");
-         }
-         dim = new Dimension(unitName,primtype,sepequal[0]);
-
+         ErrorHandling.printError(ctx, "Operacao errada na conversao!");
+         validation=false;
       }
+      dim = new Dimension(unitName,primtype,sepequal[0].trim());
+      dim.checkConversion(sepequal[0],unitName,ratio);
+      return validation;
    }
    @Override public Object visitTypeNormal(DimensionsParser.TypeNormalContext ctx) {
-      String datatype = visit(ctx.datatype());
-      String unit = visit(ctx.unit());
+      String datatype = (String) visit(ctx.datatype());
+      String unit = (String) visit(ctx.unit());
+      String typefinal="";
       if(datatype != null) {
          datatype = datatype + " ";
          typefinal = datatype + unit;
@@ -114,8 +116,9 @@ public class DimCheck extends DimensionsBaseVisitor<Object> {
    @Override public Object visitTypeVars(DimensionsParser.TypeVarsContext ctx) {
       String dimensionName1 = ctx.DIMID(0).getText();
       String dimensionName2 = ctx.DIMID(1).getText();
+      String datatype ="";
       if(DimensionsParser.dimTable.containsKey(dimensionName1) && DimensionsParser.dimTable.containsKey(dimensionName2)) {
-         String datatype = dimensionName1 + ctx.op.getText() + dimensionName2;
+         datatype = dimensionName1 + ctx.op.getText() + dimensionName2;
       } else {
          ErrorHandling.printError(ctx, "Dimension is not defined!");
       }
@@ -123,7 +126,8 @@ public class DimCheck extends DimensionsBaseVisitor<Object> {
    }
 
    @Override public Object visitTypeConversions(DimensionsParser.TypeConversionsContext ctx) {
-      String conversion = visit(ctx.conversion);
+      boolean validation=true;
+      String conversion = (String) visit(ctx.conversion());
        if (conversion != null){
           return conversion;
        }
@@ -135,36 +139,24 @@ public class DimCheck extends DimensionsBaseVisitor<Object> {
 
 
    @Override public Object visitConvCheck(DimensionsParser.ConvCheckContext ctx) {
-      try {
-         Double d = Double.parseDouble(ctx.DIGIT().getText());
-      } catch(ParseException e) {
-         System.out.println("Error in parsing double!");
-         e.printStackTrace();
-      }
+      boolean validation = true;
+      Double d=Double.parseDouble(ctx.number().getText());
       if( d != null) {
-         String s = ctx.ID(0).getText() + "=" + ctx.DIGIT().getText() + ctx.op + ctx.ID(1).getText();
-         return s;
+         String s = ctx.ID(0).getText() + "=" + ctx.number().getText() + ctx.op + ctx.ID(1).getText();
       } else {
          ErrorHandling.printError(ctx, "Digito Inválido!");
-         return null;
+         validation=false;
       }
 
+      return validation;
    }
-
-   @Override public Object visitDTypeCheck(DimensionsParser.DTypeCheckContext  ctx) {
-      if (ctx.tp.getText().equals("real") ||ctx.tp.getText()equals("integer") ) {
-         return ctx.tp;
-      }
-      else {
-         ErrorHandling.printError(ctx, "Primitive Type" + ctx.tp + "Not Found!");
-         return null;
-      }
-   }
+   
    @Override public Object visitUnitCheck(DimensionsParser.UnitCheckContext ctx) {
      String tmp =ctx.getText().replace("(","").replace(")","");
      return tmp;
    }
 }
+
 
 
 

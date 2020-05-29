@@ -67,11 +67,10 @@ expr returns[Type eType, String varName, String dim, String unit]:              
     | e1=expr op=('==' | '!=') e2=expr              #equalComparisonExpr
     | e1=expr op=('>=' | '<=' | '>' | '<') e2=expr  #greatLowComparisonExpr
     | '(' e=expr ')'                                #parenExpr
-    | increment                                     #incrExpr
     | input                                         #inputExpr
     | ID                                            #idExpr
-    | REAL   unit?                                       #realExpr
-    | INTEGER unit?                                      #integerExpr
+    | REAL   unit?                                   #realExpr
+    | INTEGER unit?                                  #integerExpr
     | BOOLEAN                                       #booleanExpr
     | STRING                                        #strExpr
    

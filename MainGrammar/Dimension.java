@@ -56,13 +56,37 @@ public class Dimension extends Type{
 		}
 		return true;
 	}
-	
+	public String name(){
+		return this.name;
+	}
+
 	public List<String> getUnits(){
 		return this.units;
 	}
+
+	public String getBaseUnit() {
+		for (String s : units) {
+			if (conversions.get(s) == -1.0) {
+				return s;
+			}
+		}
+	}
+
 	public String getPrimType(){
 		return this.primtype;
 	}
+
+	@Override
+	public boolean conformsTo(Type other) {
+
+
+      return name.equals(other.name());
+   }
+
+   public String toString()
+   {
+      return "" + this.name;
+   }
 }
 
 

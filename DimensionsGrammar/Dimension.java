@@ -74,10 +74,11 @@ public class Dimension extends Type{
 	}
 	public String getBaseUnit() {
 		for(String s : units) {
-			if( conversion.get(s) == -1) {
+			if( conversions.get(s) == -1) {
 				return s;
 			}
 		}
+		return "";
 	}
 }
 
