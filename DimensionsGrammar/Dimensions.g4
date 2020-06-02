@@ -11,27 +11,26 @@ static protected Map<String,Dimension> dimTable = new HashMap<>();              
 
 program: (stats)* EOF                           #Prog ;          
 stats: (declaration| addunit) ';'               #Stat ;             //
-declaration: DIMID  '->' type                   #Declar ;           //DIMID=grandeza a definir, type=tipo de var e unidades
-addunit: DIMID '-> addUnit' type                #addUn;             //DIMID=grandeza a definir, type=tipo de var e unidades
+declaration: ID  '->' type                   #Declar ;           //ID=grandeza a definir, type=tipo de var e unidades
+addunit: ID '-> addUnit' type                #addUn;             //DID=grandeza a definir, type=tipo de var e unidades
 
 type: datatype unit                             #TypeNormal         //declaration:definir grandezas base(que nao tem do mesmo tipo ja definido)     ( integer m/s )
-| DIMID  op =('*'|'/') DIMID                    #TypeVars           //declaration                                                                   ( Velocidade=Distance/Time )
+| ID  op =('*'|'/') ID                          #TypeVars           //declaration                                                                   ( Velocidade=Distance/Time )
 | conversion                                    #TypeConversions    //addunit:converter ordens de grandeza                                          ( cm=200*m )
 ;
 
 
 conversion:ID '=' number op=('*' | '/' ) ID      #ConvCheck ;        //qual nome da unidade de conversao e respetiva escala em relaçao a ordem de grandeza definida anteriormente
 
-datatype: 'real' | 'integer'                    #DTypeCheck ;       //tipos de dados primitivos
+datatype: dt=('real' | 'integer')                #DTypeCheck ;       //tipos de dados primitivos
 
 unit: '(' ID (op=('*'|'/') ID)*  ')'            #unitCheck ;        //unidades (ex: m, cm, s, m/s, etc)
 
 number: INTEGER | REAL;
 
 REAL: [0-9]+ '.' [0-9]*;                        
-INTEGER: [0-9]+; 
-DIMID: [A-Z]LETTER+;                                                //Obrigar que o nome da dimensao seja comecado por maiuscula e ser mais que uma letra
-ID: LETTER+;
+INTEGER: [0-9]+;                                               //Obrigar que o nome da dimensao seja comecado por maiuscula e ser mais que uma letra
+ID: LETTER ( LETTER | INTEGER )*;
 LETTER: [a-zA-Z];
 
 COMMENT:'//' .*? '\n' -> skip;

@@ -80,6 +80,10 @@ public class Dimension extends Type{
 		}
 		return "";
 	}
+	@Override
+	public String toString(){
+		return this.name+ " " +this.primtype+" "+this.getBaseUnit();
+	}
 }
 
 

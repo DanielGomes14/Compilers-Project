@@ -45,8 +45,7 @@ whileloop: 'while' '(' expr ')' '{' trueSL=statList '}'   #whileCond ;   //condi
 
 idList: ID (',' ID)*  #checkIDList;                                                          //nome da variavel a que se quer atribuir valor
 
-input:  'scan''('  STRING ')'   #checkInput;                                                 //ler dados do utilizador
-
+input:  'scan''('  STRING ','type')'                                                  //ler dados do utilizador
 
 increment: (ID incre=( '++' | '--')) ;                                                        //incrementar ou decrementar uma variavel por 1
 
@@ -55,7 +54,7 @@ type returns[Type res]:                                                         
    | 'real'    {$res = new RealType();}      #typeReal
    | 'boolean' {$res = new BooleanType();}   #typeBool
    | 'string' {$res = new StringType();}    #typeStr
-   | DIMID     #DimensionType              
+   | ID     #DimensionType              
    ;
 
 expr returns[Type eType, String varName, String dim, String unit]:                                                     //expressoes possiveis(operacoes, comparacoes ou respetivos tipos de variavel)
@@ -79,7 +78,6 @@ expr returns[Type eType, String varName, String dim, String unit]:              
 unit: '(' ID (op=('*'|'/') ID)*  ')'            #unitCheck ;  
 
 BOOLEAN: 'true' | 'false';                      //tipo boolean
-DIMID: [A-Z]LETTER+;                        //nomes Dimensoes
 ID: LETTER ( LETTER | INTEGER )*;                    //nomes variaveis 
 LETTER: [a-zA-Z_];                              
 REAL: [0-9]+ '.' [0-9]*;                        //tipo real
