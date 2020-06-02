@@ -35,10 +35,10 @@ public class DimCheck extends DimensionsBaseVisitor<Object> {
             String[] subtype ;
             char op;
             if(type.contains("/")) {
-               subtype = type.split("/");
+               subtype = type.split("\\/");
                op = '/';
             } else {
-               subtype = type.split("*");
+               subtype = type.split("\\*");
                op = '*';
             }
             String dimensionName1 = subtype[0];
@@ -49,7 +49,7 @@ public class DimCheck extends DimensionsBaseVisitor<Object> {
             } else {
                Dimension dimension1 = DimensionsParser.dimTable.get(dimensionName1);
                Dimension dimension2 = DimensionsParser.dimTable.get(dimensionName2);
-               String primType = dimension1.getPrimType().equals(dimension2,getPrimType()) ? dimension1.getPrimType() : "real";
+               String primType = dimension1.getPrimType().equals(dimension2.getPrimType()) ? dimension1.getPrimType() : "real";
                d = new Dimension(dimensionName, primType, dimension1.getBaseUnit()+ op+ dimension2.getBaseUnit());
                DimensionsParser.dimTable.put(dimensionName, d);
                validation =true;
@@ -87,7 +87,6 @@ public class DimCheck extends DimensionsBaseVisitor<Object> {
       String primtype="";
       Double ratio=0.0;
       if(op=='*'){
-               System.out.println(sepoper[0]);
                ratio = Double.parseDouble(sepoper[0]);
                if(DimensionsParser.dimTable.containsKey(sepoper[1])){
                   primtype=DimensionsParser.dimTable.get(sepoper[1]).getPrimType();
@@ -106,7 +105,9 @@ public class DimCheck extends DimensionsBaseVisitor<Object> {
          validation=false;
       }
       dim = new Dimension(unitName,primtype,sepequal[0].trim());
-      dim.checkConversion(sepequal[0],unitName,ratio);
+      if(!dim.checkConversion(sepequal[0],unitName,ratio)) {
+         ErrorHandling.printError(ctx, "Unidade já existente!");
+      }
       return validation;
    }
    @Override public Object visitTypeNormal(DimensionsParser.TypeNormalContext ctx) {
@@ -149,7 +150,6 @@ public class DimCheck extends DimensionsBaseVisitor<Object> {
    @Override public Object visitTypeConversions(DimensionsParser.TypeConversionsContext ctx) {
       boolean validation=true;
       String conversion = (String) visit(ctx.conversion());
-      System.out.print(conversion);
        if (conversion != null){
           return conversion;
        }
