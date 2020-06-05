@@ -1,0 +1,63 @@
+
+
+stats(stat) ::= << 
+<if(stat)> <stat; separator="\n"><endif>
+>>
+
+
+
+
+module(name, stat) ::= <<
+public class <name> {
+    public static void main (String[] args) {
+        <stats(stat)>
+    }
+}
+>>
+
+primitiveTypes ::= [
+    "integer" : "int",
+    "real" : "double",
+    "boolean" : "boolean",
+    "string" : "String",
+    default : "null"
+    
+]
+
+decl(type, var, value) ::= "<typeValue.(type)> <var> = <value>;"
+
+condition(stat, var, true_stat, false_stat) ::= <<
+<stats(stat)>
+if(<var>) {
+    <true_stat>
+} <if(false_stat)>
+else {
+    <false_stat>
+}
+<endif>
+>>
+
+inc(var, op) ::= "<var> <op><op>;"
+
+forloop(stat, var,inc , value, condition) ::= <<
+<stats(stat)>
+for(<var>; <condition>; <inc>) {
+    <stats(stat)>
+}
+>>
+
+while(stat, condition) ::= <<
+while(<condition>) {
+    <stats(stat)>
+}
+>>
+
+print(value) ::= <<
+System.out.println(<value>);
+>>
+
+dimensionDecl(dimension, var, value) ::= <<
+    <stats(stat)>
+    <primitiveTypes> <var> = <value>
+
+>>

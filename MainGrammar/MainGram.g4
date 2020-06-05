@@ -45,7 +45,7 @@ whileloop: 'while' '(' expr ')' '{' trueSL=statList '}'   #whileCond ;   //condi
 
 idList: ID (',' ID)*  #checkIDList;                                                          //nome da variavel a que se quer atribuir valor
 
-input:  'scan''('  STRING ','type')'                                                  //ler dados do utilizador
+input:  'scan''('  STRING ','type')'  ;                                                //ler dados do utilizador
 
 increment: (ID incre=( '++' | '--')) ;                                                        //incrementar ou decrementar uma variavel por 1
 
@@ -57,7 +57,7 @@ type returns[Type res]:                                                         
    | ID     #DimensionType              
    ;
 
-expr returns[Type eType, String varName, String dim, String unit]:                                                     //expressoes possiveis(operacoes, comparacoes ou respetivos tipos de variavel)
+expr returns[Type eType, String varName, String dim, String uni]:                                                     //expressoes possiveis(operacoes, comparacoes ou respetivos tipos de variavel)
      <assoc=right> e1=expr '^' e2=expr              #powExpr
     | sign=('+'|'-') e=expr                         #signExpr
     | '!' e=expr                                    #notExpr 
@@ -71,8 +71,7 @@ expr returns[Type eType, String varName, String dim, String unit]:              
     | REAL   unit?                                   #realExpr
     | INTEGER unit?                                  #integerExpr
     | BOOLEAN                                       #booleanExpr
-    | STRING                                        #strExpr
-   
+    | STRING                                        #strExp
     ;
 
 unit: '(' ID (op=('*'|'/') ID)*  ')'            #unitCheck ;  
