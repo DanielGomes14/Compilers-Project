@@ -1,5 +1,6 @@
 import org.stringtemplate.v4.*;
 import java.util.*;
+import java.util.iterator;
 public class Compiler extends MainGramBaseVisitor<ST> {
 
    private STGroup templates = new STGroupFile("templates.stg");
@@ -10,7 +11,7 @@ public class Compiler extends MainGramBaseVisitor<ST> {
    }
    @Override public ST visitMain(MainGramParser.MainContext ctx) {
       ST res = templates.getInstanceOf("module");
-      Iterator<MainGramParser.StatListContext> list = ctx.statList().iterator();
+      Iterator<MainGramParser.StatListContext> list = ((Object) ctx.statList()).iterator();
       while(list.hasNext()){
          res.add("stat", visit(list.next().render()));
       }
@@ -24,14 +25,14 @@ public class Compiler extends MainGramBaseVisitor<ST> {
    @Override public ST visitStat(MainGramParser.StatContext ctx) {
       ST res = templates.getInstanceOf("print");
       res.add("stat",ctx.expr().render());
-      res.add("stat",ctx.expr().var();
+      res.add("stat",ctx.expr().var());
 
       return res;
    }
 
    @Override public ST visitCheckPrint(MainGramParser.CheckPrintContext ctx) {
       ST res = templates.getInstanceOf("print");
-      res.add("")
+      res.add("");
       return visitChildren(ctx);
    }
 

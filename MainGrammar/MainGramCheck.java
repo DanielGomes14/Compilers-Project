@@ -1,6 +1,11 @@
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
+import java.io.*;
+import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.tree.*;
+import org.antlr.v4.runtime.ParserRuleContext;
 
-import jdk.internal.org.xml.sax.ErrorHandler;
 public class MainGramCheck extends MainGramBaseVisitor<Object> {
    private boolean validation = true;
    private final RealType realType = new RealType();
@@ -8,10 +13,25 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
    private final BooleanType booleanType = new BooleanType();
    private final StringType stringType = new StringType();
 
+   private Type getTypeExpr(Type t1,Type t2,String op){
+      Type r = null;
+      if(t1.isNumeric() && t2.isNumeric()){
+         if(t1.name().equals("real") || t2.name().equals("real")){
+            r=realType;
+         }
+         else{
+            r=t1;
+         }
+      }  
+       else if (t1.name().equals("string")|| t2.name().equals("string") && op.equals("+") ){
+          r=stringType;
+       }
+       return r;
+   }
    @Override
    public Object visitMain(MainGramParser.MainContext ctx) {
       if(ctx.importDims()!=null){
-         validation=(boolean)visit(ctx.importDims());
+         validation=(boolean)visit(ctx.importDims(0));
       }
       if (validation){
          validation = (boolean) visit(ctx.statList());
@@ -37,14 +57,38 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
 
    @Override
    public Object visitImportDimensionFile(MainGramParser.ImportDimensionFileContext ctx) {
-      return visitChildren(ctx);
+      validation = true;
+      String fileName = ctx.ID().getText() + ".txt";
+      InputStream in_stream = null;
+      CharStream input = null;
+      try {
+         in_stream = new FileInputStream(new File(fileName));
+         //instead of reading from user input, reads from file input
+         input = CharStreams.fromStream(in_stream);
+      } catch (IOException e) {
+         ErrorHandling.printError(ctx, "ERROR: reading file!");
+         validation = false;
+      }
+      if (validation) {
+         DimensionsLexer lexer = new DimensionsLexer(input);
+         CommonTokenStream tokens = new CommonTokenStream(lexer);
+         DimensionsParser parser = new DimensionsParser(tokens);
+         ParseTree tree = parser.main();
+
+         if (parser.getNumberOfSyntaxErrors() == 0) {
+         DimCheck visitor0 = new DimCheck();
+         visitor0.visit(tree);
+         }
+
+    }
+    return validation;
    }
 
    @Override
    public Object visitDecAssign(MainGramParser.DecAssignContext ctx) {
       validation = (boolean) visit(ctx.expr());
       if (validation) {
-         for (TerminalNode t : ctx.idList().ID()) {
+         for (TerminalNode t : ctx.declaration().idList().ID()) {
             String id = t.getText();
             if (MainGramParser.symbolTable.containsKey(id)) {
                ErrorHandling.printError(ctx, "Variable \"" + id + "\" already defined ");
@@ -71,7 +115,7 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
                   Symbol sb = new Symbol(id, tp);
                   if (tp.getClass().getName().equals("Dimension")) {
                      sb.setDim(ctx.declaration().type().getText());
-                     sb.setUnit(ctx.expr().unit);
+                     sb.setUnit(ctx.expr().uni);
                   }
                   sb.setValueDefined();
                   MainGramParser.symbolTable.put(id, sb);
@@ -85,7 +129,7 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
 
    @Override
    public Object visitAssign(MainGramParser.AssignContext ctx) {
-      checkInput=false;
+      validation=false;
       validation = (boolean) visit(ctx.expr());
       if (validation) {
          for (TerminalNode t : ctx.idList().ID()) {
@@ -96,8 +140,8 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
             } else {
                Type tp = (Type) visit(ctx.declaration().type());
                if (tp.getClass().getName().equals("Dimension")) {
-                  if (ctx.expr().unit != null) {
-                     String unit = ctx.expr().unit.replace("(", "").replace(")", "");
+                  if (ctx.expr().uni != null) {
+                     String unit = ctx.expr().uni.replace("(", "").replace(")", "");
                      Dimension dim = (Dimension) tp; // dimension is a type
                      if (dim.checkUnit(unit)) { // check if unit is in the list of units of Dimension
                         ErrorHandling.printError(ctx,
@@ -115,7 +159,7 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
                   Symbol sb = new Symbol(id, tp);
                   if (tp.getClass().getName().equals("Dimension")) {
                      sb.setDim(ctx.declaration().type().getText());
-                     sb.setUnit(ctx.expr().unit);
+                     sb.setUnit(ctx.expr().uni);
                   }
                   sb.setValueDefined();
 
@@ -151,8 +195,8 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
       if (validation) {
          if (ctx.expr().eType.conformsTo(booleanType)) {
             visit(ctx.trueSL);
-            ctx.expr().unit = "NoUnit";
-            ctx.expr().eType = "NoDim";
+            ctx.expr().uni = "NoUnit";
+            ctx.expr().dim = "NoDim";
             if (ctx.falseSL != null) {
                // if it enter else / else if statement..
                visit(ctx.falseSL);
@@ -192,7 +236,7 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
    public Object visitWhileCond(MainGramParser.WhileCondContext ctx) {
       validation = (boolean) visit(ctx.expr());
       if (validation) {
-         if (!ctx.expr.eType.conformsTo(booleanType)) {
+         if (!ctx.expr().eType.conformsTo(booleanType)) {
             ErrorHandling.printError(ctx, "Not a valid conditional expression in a while statement");
             validation = false;
          }
@@ -201,10 +245,6 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
       return validation;
    }
 
-   @Override
-   public Object visitCheckIDList(MainGramParser.CheckIDListContext ctx) {
-      return true;
-   }
 
    @Override
    public Object visitIncrement(MainGramParser.IncrementContext ctx) {
@@ -253,7 +293,7 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
 
    @Override
    public Object visitDimensionType(MainGramParser.DimensionTypeContext ctx) {
-      String dimname = ctx.DIMID.getText();
+      String dimname = ctx.ID.getText();
       if (MainGramParser.dimTable.containsKey(dimname)) {
          ctx.res = MainGramParser.dimTable.get(dimname);
          return true;
@@ -276,8 +316,8 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
       validation=(boolean)visit(ctx.e1) && (boolean) visit(ctx.e2);
       boolean flag=false;
       if(validation){
-         if(ctx.e1.eType.conformsTo(booleanType) | ctx.e2.eType.conformsTo(booleanType)){
-            ErrorHandling.printError(ctx, "Cannot apply operator\\" + ctx.op + "\" to boolean operand");
+         if(ctx.e1.eType.conformsTo(booleanType) && ctx.e2.eType.conformsTo(booleanType)){
+            ErrorHandling.printError(ctx, "Cannot apply operator\\" + ctx.op + "\" to boolean operands");
             validation=false;
          }
          else{
@@ -286,18 +326,18 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
                   ErrorHandling.printError(ctx, "Cannot apply operator\\" + ctx.op + "\" to operands from diferent dimensions");
                   validation=false;
                } 
-         
-               if(ctx.e1.uni.equals("NoUnit") &&  ctx.e2.uni.equals("NoUnit") ){
+         // check unit of the context of the current expression
+               else if(ctx.e1.uni.equals("NoUnit") &&  ctx.e2.uni.equals("NoUnit") ){
                   ctx.uni="NoUnit";
                }
                else if((!ctx.e2.uni.equals("NoUnit") &&  ctx.e1.uni.equals("NoUnit")) ||( !ctx.e1.uni.equals("NoUnit") &&  ctx.e2.uni.equals("NoUnit"))){
                   ErrorHandling.printError(ctx, "Cannot apply operator\\" + ctx.op + "\" for a dimensional operand and a adimensional operand");
                   validation=false;
                }
-               else if (!ctx.e1.unit.equals("NoUnit") && !ctx.e2.unit.equals("NoUnit")){
+               else if (!ctx.e1.uni.equals("NoUnit") && !ctx.e2.uni.equals("NoUnit")){
                   for (Dimension  d : MainGramParser.dimTable.keySet()) {
                      if(!d.checkUnit(ctx.e1.uni) && !d.checkUnit(ctx.e2.uni)){
-                         ctx.unit=d.getBaseUnit();
+                         ctx.uni=d.getBaseUnit();
                          flag=true;
                      }
                  }
@@ -308,9 +348,16 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
                }
             }
             else{
-               ctx.unit="Void";
+               ctx.uni="Void";
             }
-            //ainda falta ver dimensao e type do contexto da expressao atuals
+            Type t = getTypeExpr(ctx.e1.eType,ctx.e2.eType, ctx.op);
+            if ( t == null){
+               ErrorHandling.printError(ctx, "Cannot apply operator\\" + ctx.op + "\" to non numeric operands");
+            }
+            else{
+               ctx.eType=t;
+               ctx.dim=ctx.e1.dim; //to perform add/sub operations they have to be of the same dimension and, with that, the dimension can be either the first or second operand' dimension
+            }
          }
       }
       
@@ -465,21 +512,21 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
             validation=false;
          }
          else{
-            if (ctx.e1.unit.equals("NoUnit") && ctx.e2.unit.equals("NoUnit")){
+            if (ctx.e1.uni.equals("NoUnit") && ctx.e2.uni.equals("NoUnit")){
                ctx.uni="NoUnit";
                ctx.dim="NoDim";
             }
-            else if(!ctx.e1.unit.equals("NoUnit") && ctx.e2.unit.equals("NoUnit")){
+            else if(!ctx.e1.uni.equals("NoUnit") && ctx.e2.uni.equals("NoUnit")){
                ctx.uni=ctx.e1.unit;
                ctx.dim=ctx.e1.dim;
             }
-            else if (ctx.e1.unit.equals("NoUnit") && !ctx.e2.unit.equals("NoUnit")){
+            else if (ctx.e1.uni.equals("NoUnit") && !ctx.e2.uni.equals("NoUnit")){
                ctx.uni=ctx.e2.unit;
                ctx.dim=ctx.e2.dim;
             }
-            else if(!ctx.e1.unit.equals("Nounit") && !ctx.e2.unit.equals("NoUnit")){
+            else if(!ctx.e1.uni.equals("Nounit") && !ctx.e2.uni.equals("NoUnit")){
                String op = ctx.op.getText();
-               ctx.uni=(ctx.e1.unit + ctx.op + ctx.e2.unit);
+               ctx.uni=(ctx.e1.uni + ctx.op + ctx.e2.uni);
             }
             for (Dimension  d : MainGramParser.dimTable.keySet()) {
                if(!d.checkUnit(ctx.uni)){
@@ -488,7 +535,7 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
                }
            }
            if(!flag) ctx.dim="NoDim";
-           if(ctx.e1.eType.conformsTo(realType) !! ctx.e2.eType.conformsTo(realtype)){
+           if(ctx.e1.eType.conformsTo(realType) || ctx.e2.eType.conformsTo(realType)){
               ctx.eType=realType;
            }
            else ctx.eType=integerType;

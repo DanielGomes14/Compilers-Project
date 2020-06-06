@@ -6,5 +6,12 @@ public class RealType extends Type {
    public boolean isNumeric() {
       return true;
    }
+   @Override
+   public boolean conformsTo(Type other) {
+       if (other.name().equals("integer")) {
+           return true;
+       }
+       return name.equals(other.name());
+   }
 }
 
