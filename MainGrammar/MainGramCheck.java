@@ -177,12 +177,12 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
          ErrorHandling.printError(ctx, "Variable \"" + id + "\" already defined");
          return false;
       } else {
-         Boolean res = visit(ctx.type());
+         Boolean res = (boolean) visit(ctx.type());
          if (res) {
             Type type = ctx.type().res;
             Symbol s = new Symbol(typeStr, type);
             s.setValueDefined();
-            MainGramParser.map.put(id, s);
+            MainGramParser.symbolTable.put(id, s);
          }
       }
       return true;
@@ -350,9 +350,9 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
             else{
                ctx.uni="Void";
             }
-            Type t = getTypeExpr(ctx.e1.eType,ctx.e2.eType, ctx.op);
+            Type t = getTypeExpr(ctx.e1.eType,ctx.e2.eType, ctx.op.getText());
             if ( t == null){
-               ErrorHandling.printError(ctx, "Cannot apply operator\\" + ctx.op + "\" to non numeric operands");
+               ErrorHandling.printError(ctx, "Cannot apply operator\\" + ctx.op.getText() + "\" to non numeric operands");
             }
             else{
                ctx.eType=t;
@@ -391,7 +391,7 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
       if (ctx.unit() != null) {
          validation = (boolean) visit(ctx.unit());
          if (validation) {
-            ctx.unit = ctx.unit().getText().replace("(", "").replace(")", "");
+            ctx.uni = ctx.unit().getText().replace("(", "").replace(")", "");
 
          } else {
             ErrorHandling.printError(ctx, "Invalid Unit");
@@ -434,9 +434,9 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
 
    @Override
    public Object visitInputExpr(MainGramParser.InputExprContext ctx) {
-      validation=(boolean) visit(ctx.type());
+      validation=(boolean) visit(ctx.input().type());
       if(validation){
-         ctx.eType=ctx.type().res;
+         ctx.eType=ctx.input().type().res;
          
       }
       return validation;
@@ -448,7 +448,7 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
       if (validation) {
          ctx.eType = ctx.expr().eType;
          ctx.dim = ctx.expr().dim;
-         ctx.uni = ctx.expr().unit;
+         ctx.uni = ctx.expr().uni;
       }
       return validation;
    }
@@ -496,7 +496,7 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
             validation = false;
          }
          ctx.eType = ctx.e.eType;
-         ctx.uni = ctx.e.unit;
+         ctx.uni = ctx.e.uni;
          ctx.dim = ctx.e.dim;
       }
       return validation;
@@ -517,11 +517,11 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
                ctx.dim="NoDim";
             }
             else if(!ctx.e1.uni.equals("NoUnit") && ctx.e2.uni.equals("NoUnit")){
-               ctx.uni=ctx.e1.unit;
+               ctx.uni=ctx.e1.uni;
                ctx.dim=ctx.e1.dim;
             }
             else if (ctx.e1.uni.equals("NoUnit") && !ctx.e2.uni.equals("NoUnit")){
-               ctx.uni=ctx.e2.unit;
+               ctx.uni=ctx.e2.uni;
                ctx.dim=ctx.e2.dim;
             }
             else if(!ctx.e1.uni.equals("Nounit") && !ctx.e2.uni.equals("NoUnit")){
@@ -548,10 +548,10 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
 
    @Override
    public Object visitPowExpr(MainGramParser.PowExprContext ctx) {
-      validation = (boolean) visit(ctx.e1) && visit(ctx.e2);
+      validation = (boolean) visit(ctx.e1) && (boolean) visit(ctx.e2);
 
       if (validation) {
-         if (!(ctx.e.eType.isNumeric() && ctx.e.eType.isNumeric())) {
+         if (!(ctx.e1.eType.isNumeric() || ctx.e2.eType.isNumeric())) {
             ErrorHandling.printError(ctx, "Cannot Use pow operation for Non Numeric Types of Expressions");
             validation = false;
          }

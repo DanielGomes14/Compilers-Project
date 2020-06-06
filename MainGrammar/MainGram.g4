@@ -23,11 +23,11 @@ stat: print                           //tipo de expressoes possiveis
 print: 'println' expr  #checkPrint;                                                         //esrever texto ou variaveis
 
 importDims: 'import' ID ';'  #importDimensionFile;                                          // dá import a File com as Dimensions
-
+declaration: type idList     #dec;                                                          // tipo e nome da variavel a ser declarada
+idList: ID (',' ID)*  #checkIDList;                                                          //nome da variavel a que se quer atribuir valor
 assignment: declaration '=' expr  #decAssign                                                //declarar variavel e atribuir o valor
           | idList '=' expr      #Assign                                                    //caso a variavel ja exista alterar valor
             ;
-declaration: type idList     #dec;                                                          // tipo e nome da variavel a ser declarada
 
 
 
@@ -43,9 +43,8 @@ forloop: 'for' '(' assignment ';' expr ';' expr ')' '{' trueSL=statList '}'   #f
 
 whileloop: 'while' '(' expr ')' '{' trueSL=statList '}'   #whileCond ;   //condição while
 
-idList: ID (',' ID)*  #checkIDList;                                                          //nome da variavel a que se quer atribuir valor
 
-input:  'scan''('  STRING ','type')'  ;                                                //ler dados do utilizador
+input:  'scan''('  STRING ',' type ')'  ;                                                //ler dados do utilizador
 
 increment: (ID incre=( '++' | '--')) ;                                                        //incrementar ou decrementar uma variavel por 1
 
