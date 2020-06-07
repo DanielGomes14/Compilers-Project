@@ -27,11 +27,13 @@ print: 'println' expr  #checkPrint;                                             
 
 importDims: 'import' ID ';'  #importDimensionFile;                                          // dá import a File com as Dimensions
 
-declaration: type ID  ;                                                          // tipo e nome da variavel a ser declarada
+declaration: type idList;                                                          // tipo e nome da variavel a ser declarada
 assignment: declaration '=' expr  #decAssign                                                //declarar variavel e atribuir o valor
-          | ID '=' expr      #Assign                                                    //caso a variavel ja exista alterar valor
+          | idList '=' expr      #Assign                                                    //caso a variavel ja exista alterar valor
             ;
 
+
+idList: ID (',' ID)* ;                                                                       //nome da variavel a que se quer atribuir valor
 conditionalstat: conditional                                                                // definição if  e else 
                | forloop                                                                    // definição do for
                | whileloop                                                                  // definição do while

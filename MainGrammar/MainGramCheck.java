@@ -96,7 +96,8 @@ public class MainGramCheck extends MainGramBaseVisitor<Boolean> {
       validation =  visit(ctx.expr());
 
       if (validation) {
-            String id = ctx.declaration().ID().getText();
+         for (TerminalNode t : ctx.declaration().idList().ID()) {
+            String id = t.getText();
             if (MainGramParser.symbolTable.containsKey(id)) {
                ErrorHandling.printError(ctx, "Variable \"" + id + "\" already defined ");
                validation = false;
@@ -129,7 +130,7 @@ public class MainGramCheck extends MainGramBaseVisitor<Boolean> {
                   MainGramParser.symbolTable.put(id, sb);
                }
             }
-         
+         }
 
       }
       return validation;
@@ -140,7 +141,8 @@ public class MainGramCheck extends MainGramBaseVisitor<Boolean> {
       validation=false;
       validation =  visit(ctx.expr());
       if (validation) {
-            String id =ctx.ID().getText();
+         for (TerminalNode t : ctx.idList().ID()) {
+            String id = t.getText();
             if (!MainGramParser.symbolTable.containsKey(id)) {
                ErrorHandling.printError(ctx, "Variable \"" + id + "\" not defined ");
                validation = false;
@@ -171,13 +173,15 @@ public class MainGramCheck extends MainGramBaseVisitor<Boolean> {
 
                }
             }
+         }
       }
       return validation;
    }
 
    @Override
    public Boolean visitDeclaration(MainGramParser.DeclarationContext ctx) {
-      String id = ctx.ID().getText(), typeStr = ctx.type().getText();
+      for (TerminalNode t : ctx.idList().ID()){
+      String id = t.getText(), typeStr = ctx.type().getText();
       if (MainGramParser.symbolTable.containsKey(id)) {
          ErrorHandling.printError(ctx, "Variable \"" + id + "\" already defined");
          return false;
@@ -190,6 +194,7 @@ public class MainGramCheck extends MainGramBaseVisitor<Boolean> {
             MainGramParser.symbolTable.put(id, s);
          }
       }
+   }
       return true;
    }
 
