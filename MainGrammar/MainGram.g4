@@ -14,22 +14,23 @@ main: (importDims)* statList EOF;
 statList: (stat ';')*;                //lista de stats
 
 stat: print                           //tipo de expressoes possiveis
-    | declaration
     | assignment
+    | declaration
     | conditionalstat
     | increment
     ;
 
 print: 'println' expr  #checkPrint;                                                         //esrever texto ou variaveis
 
+
+
+
 importDims: 'import' ID ';'  #importDimensionFile;                                          // dá import a File com as Dimensions
-declaration: type idList     #dec;                                                          // tipo e nome da variavel a ser declarada
-idList: ID (',' ID)*  #checkIDList;                                                          //nome da variavel a que se quer atribuir valor
+
+declaration: type ID  ;                                                          // tipo e nome da variavel a ser declarada
 assignment: declaration '=' expr  #decAssign                                                //declarar variavel e atribuir o valor
-          | idList '=' expr      #Assign                                                    //caso a variavel ja exista alterar valor
+          | ID '=' expr      #Assign                                                    //caso a variavel ja exista alterar valor
             ;
-
-
 
 conditionalstat: conditional                                                                // definição if  e else 
                | forloop                                                                    // definição do for
@@ -70,7 +71,7 @@ expr returns[Type eType, String varName, String dim, String uni]:               
     | REAL   unit?                                   #realExpr
     | INTEGER unit?                                  #integerExpr
     | BOOLEAN                                       #booleanExpr
-    | STRING                                        #strExp
+    | STRING                                        #strExpr
     ;
 
 unit: '(' ID (op=('*'|'/') ID)*  ')'            #unitCheck ;  

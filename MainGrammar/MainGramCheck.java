@@ -1,12 +1,17 @@
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
+
+import javax.xml.namespace.QName;
+
 import java.io.*;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
+;
+
 import org.antlr.v4.runtime.ParserRuleContext;
 
-public class MainGramCheck extends MainGramBaseVisitor<Object> {
+public class MainGramCheck extends MainGramBaseVisitor<Boolean> {
    private boolean validation = true;
    private final RealType realType = new RealType();
    private final IntegerType integerType = new IntegerType();
@@ -29,35 +34,36 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
        return r;
    }
    @Override
-   public Object visitMain(MainGramParser.MainContext ctx) {
+   public Boolean visitMain(MainGramParser.MainContext ctx) {
       if(ctx.importDims()!=null){
-         validation=(boolean)visit(ctx.importDims(0));
+         validation=visit(ctx.importDims(0));
       }
       if (validation){
-         validation = (boolean) visit(ctx.statList());
+         validation =  visit(ctx.statList());
       }
      
      return validation;
    }
 
    @Override
-   public Object visitStatList(MainGramParser.StatListContext ctx) {
+   public Boolean visitStatList(MainGramParser.StatListContext ctx) {
       return visitChildren(ctx);
    }
 
    @Override
-   public Object visitStat(MainGramParser.StatContext ctx) {
+   public Boolean visitStat(MainGramParser.StatContext ctx) {
       return visitChildren(ctx);
    }
 
    @Override
-   public Object visitCheckPrint(MainGramParser.CheckPrintContext ctx) {
+   public Boolean visitCheckPrint(MainGramParser.CheckPrintContext ctx) {
       return visitChildren(ctx);
    }
 
    @Override
-   public Object visitImportDimensionFile(MainGramParser.ImportDimensionFileContext ctx) {
+   public Boolean visitImportDimensionFile(MainGramParser.ImportDimensionFileContext ctx) {
       validation = true;
+      /*
       String fileName = ctx.ID().getText() + ".txt";
       InputStream in_stream = null;
       CharStream input = null;
@@ -81,20 +87,22 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
          }
 
     }
+    */
     return validation;
    }
 
    @Override
-   public Object visitDecAssign(MainGramParser.DecAssignContext ctx) {
-      validation = (boolean) visit(ctx.expr());
+   public Boolean visitDecAssign(MainGramParser.DecAssignContext ctx) {
+      validation =  visit(ctx.expr());
+
       if (validation) {
-         for (TerminalNode t : ctx.declaration().idList().ID()) {
-            String id = t.getText();
+            String id = ctx.declaration().ID().getText();
             if (MainGramParser.symbolTable.containsKey(id)) {
                ErrorHandling.printError(ctx, "Variable \"" + id + "\" already defined ");
                validation = false;
             } else {
-               Type tp = (Type) visit(ctx.declaration().type());
+               visit(ctx.declaration().type());
+               Type tp = ctx.declaration().type().res; 
                if (tp.getClass().getName().equals("Dimension")) {
                   if (ctx.expr().uni != null) {
                      String unit = ctx.expr().uni.replace("(", "").replace(")", "");
@@ -121,63 +129,60 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
                   MainGramParser.symbolTable.put(id, sb);
                }
             }
-         }
+         
 
       }
       return validation;
    }
 
    @Override
-   public Object visitAssign(MainGramParser.AssignContext ctx) {
+   public Boolean visitAssign(MainGramParser.AssignContext ctx) {
       validation=false;
-      validation = (boolean) visit(ctx.expr());
+      validation =  visit(ctx.expr());
       if (validation) {
-         for (TerminalNode t : ctx.idList().ID()) {
-            String id = t.getText();
+            String id =ctx.ID().getText();
             if (!MainGramParser.symbolTable.containsKey(id)) {
                ErrorHandling.printError(ctx, "Variable \"" + id + "\" not defined ");
                validation = false;
             } else {
-               Type tp = (Type) visit(ctx.declaration().type());
-               if (tp.getClass().getName().equals("Dimension")) {
+               Symbol sb = MainGramParser.symbolTable.get(id);
+               if (sb.type().getClass().getName().equals("Dimension")) {
                   if (ctx.expr().uni != null) {
                      String unit = ctx.expr().uni.replace("(", "").replace(")", "");
-                     Dimension dim = (Dimension) tp; // dimension is a type
+                     Dimension dim = (Dimension) sb.type(); // dimension is a type
                      if (dim.checkUnit(unit)) { // check if unit is in the list of units of Dimension
                         ErrorHandling.printError(ctx,
                               "The unit \"" + unit + "\" is not allowed for dimension " + dim.name());
                         validation = false;
                      }
                   } else {
-                     ErrorHandling.printError(ctx, "You must indicate the unit for Type \"" + tp + "\" .");
+                     ErrorHandling.printError(ctx, "You must indicate the unit for Type \"" + sb.type() + "\" .");
                   }
                }
-               if (!tp.conformsTo(ctx.expr().eType)) {
+               if (!sb.type().conformsTo(ctx.expr().eType)) {
                   ErrorHandling.printError(ctx, "Variable \"" + id + "\" type does not match to expression ");
                   validation = false;
                } else {
-                  Symbol sb = new Symbol(id, tp);
-                  if (tp.getClass().getName().equals("Dimension")) {
-                     sb.setDim(ctx.declaration().type().getText());
+                  if (sb.type().getClass().getName().equals("Dimension")) {
+                     sb.setDim(ctx.expr().dim);
                      sb.setUnit(ctx.expr().uni);
                   }
                   sb.setValueDefined();
 
                }
             }
-         }
       }
       return validation;
    }
 
    @Override
-   public Object visitDec(MainGramParser.DecContext ctx) {
+   public Boolean visitDeclaration(MainGramParser.DeclarationContext ctx) {
       String id = ctx.ID().getText(), typeStr = ctx.type().getText();
       if (MainGramParser.symbolTable.containsKey(id)) {
          ErrorHandling.printError(ctx, "Variable \"" + id + "\" already defined");
          return false;
       } else {
-         Boolean res = (boolean) visit(ctx.type());
+         Boolean res =  visit(ctx.type());
          if (res) {
             Type type = ctx.type().res;
             Symbol s = new Symbol(typeStr, type);
@@ -190,8 +195,8 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
 
 
    @Override
-   public Object visitConditional(MainGramParser.ConditionalContext ctx) {
-      validation = (boolean) visit(ctx.expr());
+   public Boolean visitConditional(MainGramParser.ConditionalContext ctx) {
+      validation =  visit(ctx.expr());
       if (validation) {
          if (ctx.expr().eType.conformsTo(booleanType)) {
             visit(ctx.trueSL);
@@ -209,15 +214,15 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
    }
 
    @Override
-   public Object visitElseif(MainGramParser.ElseifContext ctx) {
+   public Boolean visitElseif(MainGramParser.ElseifContext ctx) {
       return visitChildren(ctx);
    }
 
    @Override
-   public Object visitForCond(MainGramParser.ForCondContext ctx) {
-      validation = (boolean) visit(ctx.assignment());
+   public Boolean visitForCond(MainGramParser.ForCondContext ctx) {
+      validation =  visit(ctx.assignment());
       if (validation) {
-         validation = (boolean) visit(ctx.expr(0)) && (boolean) visit(ctx.expr(1)) && (boolean) visit(ctx.trueSL);
+         validation =  visit(ctx.expr(0)) &&  visit(ctx.expr(1)) &&  visit(ctx.trueSL);
          if (validation) {
             if (!ctx.expr(0).eType.conformsTo(booleanType)) {
                ErrorHandling.printError(ctx, "Not a valid conditional expression in a for statement");
@@ -233,8 +238,8 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
    }
 
    @Override
-   public Object visitWhileCond(MainGramParser.WhileCondContext ctx) {
-      validation = (boolean) visit(ctx.expr());
+   public Boolean visitWhileCond(MainGramParser.WhileCondContext ctx) {
+      validation =  visit(ctx.expr());
       if (validation) {
          if (!ctx.expr().eType.conformsTo(booleanType)) {
             ErrorHandling.printError(ctx, "Not a valid conditional expression in a while statement");
@@ -247,7 +252,7 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
 
 
    @Override
-   public Object visitIncrement(MainGramParser.IncrementContext ctx) {
+   public Boolean visitIncrement(MainGramParser.IncrementContext ctx) {
       String var = ctx.ID().getText();
       validation = true;
       if (MainGramParser.symbolTable.containsKey(var)) {
@@ -272,28 +277,28 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
    }
 
    @Override
-   public Object visitTypeInt(MainGramParser.TypeIntContext ctx) {
+   public Boolean visitTypeInt(MainGramParser.TypeIntContext ctx) {
       return true;
    }
 
    @Override
-   public Object visitTypeReal(MainGramParser.TypeRealContext ctx) {
+   public Boolean visitTypeReal(MainGramParser.TypeRealContext ctx) {
       return true;
    }
 
    @Override
-   public Object visitTypeBool(MainGramParser.TypeBoolContext ctx) {
+   public Boolean visitTypeBool(MainGramParser.TypeBoolContext ctx) {
       return true;
    }
 
    @Override
-   public Object visitTypeStr(MainGramParser.TypeStrContext ctx) {
+   public Boolean visitTypeStr(MainGramParser.TypeStrContext ctx) {
       return true;
    }
 
    @Override
-   public Object visitDimensionType(MainGramParser.DimensionTypeContext ctx) {
-      String dimname = ctx.ID.getText();
+   public Boolean visitDimensionType(MainGramParser.DimensionTypeContext ctx) {
+      String dimname = ctx.ID().getText();
       if (MainGramParser.dimTable.containsKey(dimname)) {
          ctx.res = MainGramParser.dimTable.get(dimname);
          return true;
@@ -304,7 +309,7 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
    }
 
    @Override
-   public Object visitStrExpr(MainGramParser.StrExprContext ctx) {
+   public Boolean visitStrExpr(MainGramParser.StrExprContext ctx) {
       ctx.eType=stringType;
       ctx.dim="NoDim";
       ctx.uni="NoUnit";
@@ -312,8 +317,8 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
    }
 
    @Override
-   public Object visitAddSubExpr(MainGramParser.AddSubExprContext ctx) {
-      validation=(boolean)visit(ctx.e1) && (boolean) visit(ctx.e2);
+   public Boolean visitAddSubExpr(MainGramParser.AddSubExprContext ctx) {
+      validation=visit(ctx.e1) &&  visit(ctx.e2);
       boolean flag=false;
       if(validation){
          if(ctx.e1.eType.conformsTo(booleanType) && ctx.e2.eType.conformsTo(booleanType)){
@@ -364,8 +369,8 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
    }
 
    @Override
-   public Object visitEqualComparisonExpr(MainGramParser.EqualComparisonExprContext ctx) {
-      validation = (boolean) visit(ctx.e1) && (boolean)visit(ctx.e2);
+   public Boolean visitEqualComparisonExpr(MainGramParser.EqualComparisonExprContext ctx) {
+      validation =  visit(ctx.e1) && visit(ctx.e2);
       if (validation) {
          if ((ctx.e1.eType.conformsTo(stringType) || ctx.e2.eType.conformsTo(stringType))
                && !ctx.e1.eType.conformsTo(ctx.e2.eType)) {
@@ -385,11 +390,11 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
    }
 
    @Override
-   public Object visitIntegerExpr(MainGramParser.IntegerExprContext ctx) {
+   public Boolean visitIntegerExpr(MainGramParser.IntegerExprContext ctx) {
       validation = true;
       ctx.eType = integerType;
       if (ctx.unit() != null) {
-         validation = (boolean) visit(ctx.unit());
+         validation =  visit(ctx.unit());
          if (validation) {
             ctx.uni = ctx.unit().getText().replace("(", "").replace(")", "");
 
@@ -405,11 +410,11 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
    }
 
    @Override
-   public Object visitRealExpr(MainGramParser.RealExprContext ctx) {
+   public Boolean visitRealExpr(MainGramParser.RealExprContext ctx) {
       validation = true;
       ctx.eType = realType;
       if (ctx.unit() != null) {
-         validation = (boolean) visit(ctx.unit());
+         validation =  visit(ctx.unit());
          if (validation) {
             ctx.uni = ctx.unit().getText().replace("(", "").replace(")", "");
 
@@ -425,7 +430,7 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
    }
 
    @Override
-   public Object visitBooleanExpr(MainGramParser.BooleanExprContext ctx) {
+   public Boolean visitBooleanExpr(MainGramParser.BooleanExprContext ctx) {
       ctx.eType = booleanType;
       ctx.dim = "noDim";
       ctx.uni = "NoUnit";
@@ -433,8 +438,8 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
    }
 
    @Override
-   public Object visitInputExpr(MainGramParser.InputExprContext ctx) {
-      validation=(boolean) visit(ctx.input().type());
+   public Boolean visitInputExpr(MainGramParser.InputExprContext ctx) {
+      validation= visit(ctx.input().type());
       if(validation){
          ctx.eType=ctx.input().type().res;
          
@@ -443,8 +448,8 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
    }
 
    @Override
-   public Object visitParenExpr(MainGramParser.ParenExprContext ctx) {
-      validation = (boolean) visit(ctx.expr());
+   public Boolean visitParenExpr(MainGramParser.ParenExprContext ctx) {
+      validation =  visit(ctx.expr());
       if (validation) {
          ctx.eType = ctx.expr().eType;
          ctx.dim = ctx.expr().dim;
@@ -454,8 +459,8 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
    }
 
    @Override
-   public Object visitGreatLowComparisonExpr(MainGramParser.GreatLowComparisonExprContext ctx) {
-      validation = (boolean) visit(ctx.e1) && (boolean) visit(ctx.e2);
+   public Boolean visitGreatLowComparisonExpr(MainGramParser.GreatLowComparisonExprContext ctx) {
+      validation =  visit(ctx.e1) &&  visit(ctx.e2);
       if (validation) {
          if (!(ctx.e1.eType.isNumeric() || ctx.e2.eType.isNumeric())) {
             ErrorHandling.printError(ctx, "Cannot Use operator\"" + ctx.op + "\"for Non Numeric Types of Expressions");
@@ -470,8 +475,8 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
    }
 
    @Override
-   public Object visitNotExpr(MainGramParser.NotExprContext ctx) {
-      validation = (boolean) visit(ctx.expr());
+   public Boolean visitNotExpr(MainGramParser.NotExprContext ctx) {
+      validation =  visit(ctx.expr());
       if (validation) {
          // check if type of the context of expr() is boolean
          if (ctx.expr().eType.conformsTo(booleanType)) {
@@ -487,8 +492,8 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
    }
 
    @Override
-   public Object visitSignExpr(MainGramParser.SignExprContext ctx) {
-      validation = (boolean) visit(ctx.e);
+   public Boolean visitSignExpr(MainGramParser.SignExprContext ctx) {
+      validation =  visit(ctx.e);
       if (validation) {
          if (!ctx.e.eType.isNumeric()) {
             ErrorHandling.printError(ctx,
@@ -503,8 +508,8 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
    }
 
    @Override
-   public Object visitMultDivExpr(MainGramParser.MultDivExprContext ctx) {
-      validation = (boolean)visit (ctx.e1) && (boolean) visit(ctx.e2);
+   public Boolean visitMultDivExpr(MainGramParser.MultDivExprContext ctx) {
+      validation = visit (ctx.e1) &&  visit(ctx.e2);
       boolean flag=false;
       if(validation){
          if(!ctx.e1.eType.isNumeric()&& ctx.e2.eType.isNumeric()){
@@ -547,8 +552,8 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
    }
 
    @Override
-   public Object visitPowExpr(MainGramParser.PowExprContext ctx) {
-      validation = (boolean) visit(ctx.e1) && (boolean) visit(ctx.e2);
+   public Boolean visitPowExpr(MainGramParser.PowExprContext ctx) {
+      validation =  visit(ctx.e1) &&  visit(ctx.e2);
 
       if (validation) {
          if (!(ctx.e1.eType.isNumeric() || ctx.e2.eType.isNumeric())) {
@@ -564,7 +569,7 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
    }
 
    @Override
-   public Object visitIdExpr(MainGramParser.IdExprContext ctx) {
+   public Boolean visitIdExpr(MainGramParser.IdExprContext ctx) {
       validation = true;
       String id = ctx.ID().getText();
       if (MainGramParser.symbolTable.containsKey(id)) {
@@ -586,7 +591,7 @@ public class MainGramCheck extends MainGramBaseVisitor<Object> {
    }
 
    @Override
-   public Object visitUnitCheck(MainGramParser.UnitCheckContext ctx) {
+   public Boolean visitUnitCheck(MainGramParser.UnitCheckContext ctx) {
       return true;
    }
 }

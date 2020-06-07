@@ -70,6 +70,7 @@ public class Dimension extends Type{
 				return s;
 			}
 		}
+		return null;
 	}
 
 	public String getPrimType(){
@@ -78,9 +79,15 @@ public class Dimension extends Type{
 
 	@Override
 	public boolean conformsTo(Type other) {
-
-
-      return name.equals(other.name());
+		boolean validation;
+		if(!other.getClass().getName().equals("Dimension")){
+			validation = (super.conformsTo(other) || this.primtype.equals(other.name()));
+		}
+		else{
+			Dimension d = (Dimension) other;
+			validation = (super.conformsTo(other) || this.primtype.equals(d.getPrimType()));
+		}
+      return validation;
    }
 
    public String toString()
