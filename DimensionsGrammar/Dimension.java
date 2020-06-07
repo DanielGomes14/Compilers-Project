@@ -32,38 +32,22 @@ public class Dimension extends Type{
 
 
 	public boolean checkConversion(String unit, String convertedunit ,double valuetoconvert){
-		if(conversions.get(unit)==null) return false;
+		if(conversions.get(unit)==null)return false;
 		if(conversions.get(unit)==-1){ //comparam nova unidade em relaçao a unidade base
 			if(checkUnit(convertedunit)){
 				units.add(convertedunit);
-				conversions.put(convertedunit,valuetoconvert);
 			}
-			else{
-				return false;
-			}
+			conversions.put(convertedunit,valuetoconvert);
+			return true;
 		} 
 		else{  //comparar nova unidade em relaçao a unidade criada por utilizador
 			double finalval= valuetoconvert* conversions.get(unit);
 			if(checkUnit(convertedunit)){
 				units.add(convertedunit);
-				conversions.put(convertedunit,finalval);
 			}
-			else{
-				
-				return false;
-			}
-			
-		}
-		return true;
-	}
-	public boolean conformsTo(Type other) {
-		if(super.conformsTo(other)) {
-			return true;
-		} else if (other.isNumeric() && this.isNumeric()) {
+			conversions.put(convertedunit,finalval);
 			return true;
 		}
-		return false;
-		
 	}
 
 	public boolean checkUnit(String unit){
@@ -72,25 +56,44 @@ public class Dimension extends Type{
 		}
 		return true;
 	}
-	
+	public String name(){
+		return this.name;
+	}
+
 	public List<String> getUnits(){
 		return this.units;
 	}
-	public String getPrimType(){
-		return this.primtype;
-	}
+
 	public String getBaseUnit() {
-		for(String s : units) {
-			if( conversions.get(s) == -1) {
+		for (String s : units) {
+			if (conversions.get(s) == -1.0) {
 				return s;
 			}
 		}
-		return "";
+		return null;
 	}
+
+	public String getPrimType(){
+		return this.primtype;
+	}
+
 	@Override
-	public String toString(){
-		return this.name+ " " +this.primtype+" "+this.getBaseUnit();
-	}
+	public boolean conformsTo(Type other) {
+		boolean validation;
+		if(!other.getClass().getName().equals("Dimension")){
+			validation = (super.conformsTo(other) || this.primtype.equals(other.name()));
+		}
+		else{
+			Dimension d = (Dimension) other;
+			validation = (super.conformsTo(other) || this.primtype.equals(d.getPrimType()));
+		}
+      return validation;
+   }
+
+   public String toString()
+   {
+      return "" + this.name;
+   }
 }
 
 

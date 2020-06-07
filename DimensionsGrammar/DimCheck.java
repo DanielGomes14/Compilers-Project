@@ -6,7 +6,6 @@ public class DimCheck extends DimensionsBaseVisitor<Object> {
       String dimensionName = (String)ctx.ID().getText();
       boolean validation = false;
       Dimension d;
-      Symbol s;
       if(!(dimensionName.toLowerCase().equals(dimensionName))){
          if(ctx.type().getChildCount() == 2) {
 
@@ -190,8 +189,3 @@ public class DimCheck extends DimensionsBaseVisitor<Object> {
      return tmp;
    }
 }
-
-
-
-
-

@@ -1,3 +1,5 @@
+package JavaFiles;
+
 public class StringValue extends Value {
 
     private static StringType type = new StringType();

@@ -1,3 +1,5 @@
+package JavaFiles;
+
 abstract public class Value
 {
    public Type type()

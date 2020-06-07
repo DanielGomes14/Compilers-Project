@@ -1,3 +1,5 @@
+package JavaFiles;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,22 +34,38 @@ public class Dimension extends Type{
 
 
 	public boolean checkConversion(String unit, String convertedunit ,double valuetoconvert){
-		if(conversions.get(unit)==null)return false;
+		if(conversions.get(unit)==null) return false;
 		if(conversions.get(unit)==-1){ //comparam nova unidade em relaçao a unidade base
 			if(checkUnit(convertedunit)){
 				units.add(convertedunit);
+				conversions.put(convertedunit,valuetoconvert);
 			}
-			conversions.put(convertedunit,valuetoconvert);
-			return true;
+			else{
+				return false;
+			}
 		} 
 		else{  //comparar nova unidade em relaçao a unidade criada por utilizador
 			double finalval= valuetoconvert* conversions.get(unit);
 			if(checkUnit(convertedunit)){
 				units.add(convertedunit);
+				conversions.put(convertedunit,finalval);
 			}
-			conversions.put(convertedunit,finalval);
+			else{
+				
+				return false;
+			}
+			
+		}
+		return true;
+	}
+	public boolean conformsTo(Type other) {
+		if(super.conformsTo(other)) {
+			return true;
+		} else if (other.isNumeric() && this.isNumeric()) {
 			return true;
 		}
+		return false;
+		
 	}
 
 	public boolean checkUnit(String unit){
@@ -62,6 +80,18 @@ public class Dimension extends Type{
 	}
 	public String getPrimType(){
 		return this.primtype;
+	}
+	public String getBaseUnit() {
+		for(String s : units) {
+			if( conversions.get(s) == -1) {
+				return s;
+			}
+		}
+		return "";
+	}
+	@Override
+	public String toString(){
+		return this.name+ " " +this.primtype+" "+this.getBaseUnit();
 	}
 }
 

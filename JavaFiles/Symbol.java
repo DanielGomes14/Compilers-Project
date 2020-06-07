@@ -1,3 +1,4 @@
+package JavaFiles;
 
 public  class Symbol {
    protected final String name;

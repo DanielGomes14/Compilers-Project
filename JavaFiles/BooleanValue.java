@@ -1,3 +1,4 @@
+package JavaFiles;
 public class BooleanValue extends Value
 {
    public BooleanValue(boolean val)

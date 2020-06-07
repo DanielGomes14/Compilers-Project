@@ -1,3 +1,5 @@
+package JavaFiles;
+
 public class IntegerValue extends Value
 {
    public IntegerValue(int val)

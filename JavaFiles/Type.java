@@ -1,3 +1,5 @@
+package JavaFiles;
+
 public abstract class Type
 {
    protected Type(String name) {
