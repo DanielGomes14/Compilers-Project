@@ -8,13 +8,12 @@ O condutor desconfia que a sua velocidade foi de 20 metros por segundo, será qu
 import dimensoes1;
 
 Velocity vel;
-Distance d = 0 (s);
-for ( Time t = 0 (s) ; t < 10 ; t ++ )
+Length d = 0.0 (m);
+Time t = 0 (s);
+while ( t < 10 (s))
 {
-     d = d + 10 ;
-  
+    t = t +  1 (s);
 };
-
 vel = d/t;
 println ("Velocidade: " + vel); 
 if (vel == 20)

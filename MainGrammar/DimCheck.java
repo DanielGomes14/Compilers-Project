@@ -8,6 +8,7 @@ public class DimCheck extends DimensionsBaseVisitor<Object> {
       Dimension d;
       if(!(dimensionName.toLowerCase().equals(dimensionName))){
          if(ctx.type().getChildCount() == 2) {
+
             String type = (String)visit(ctx.type());
             String[] subtype = type.split(" ");
             String datatype = subtype[0];
@@ -128,9 +129,10 @@ public class DimCheck extends DimensionsBaseVisitor<Object> {
       String dimensionName1 = ctx.ID(0).getText();
       String dimensionName2 = ctx.ID(1).getText();
       String datatype ="";
+      boolean validation = true;
       if (dimensionName1.toLowerCase().equals(dimensionName1) && dimensionName2.toLowerCase().equals(dimensionName2)) {
          ErrorHandling.printError(ctx, "Dimension name has to start with Upper Case");
-         return null;
+         validation =false;
 
       } else {
          if(DimensionsParser.dimTable.containsKey(dimensionName1) && DimensionsParser.dimTable.containsKey(dimensionName2)) {
@@ -138,9 +140,10 @@ public class DimCheck extends DimensionsBaseVisitor<Object> {
             return datatype;
          } else {
             ErrorHandling.printError(ctx, "Dimension is not defined!");
-            return null;
+            validation = false;
          }
       }
+      return validation;
    }
 
    @Override public Object visitTypeConversions(DimensionsParser.TypeConversionsContext ctx) {
