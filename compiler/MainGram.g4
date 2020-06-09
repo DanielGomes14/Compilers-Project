@@ -20,7 +20,7 @@ stat: print                           //tipo de expressoes possiveis
     | increment
     ;
 
-print: 'println' '(' expr ')'  ;                                                         //esrever texto ou variaveis
+print: 'println' expr  ;                                                         //esrever texto ou variaveis
 
 
 
@@ -69,7 +69,6 @@ expr returns[Type eType, String varName, String dim, String uni]:               
     | e1=expr op=('>=' | '<=' | '>' | '<') e2=expr  #greatLowComparisonExpr
     | '(' e=expr ')'                                #parenExpr
     | input                                         #inputExpr
-    |increment                                      #increExpr
     | ID                                            #idExpr
     | REAL   unit?                                   #realExpr
     | INTEGER unit?                                  #integerExpr

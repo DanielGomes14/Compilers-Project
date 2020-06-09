@@ -8,6 +8,7 @@ public class DimCheck extends DimensionsBaseVisitor<Object> {
       Dimension d;
       if(!(dimensionName.toLowerCase().equals(dimensionName))){
          if(ctx.type().getChildCount() == 2) {
+
             String type = (String)visit(ctx.type());
             String[] subtype = type.split(" ");
             String datatype = subtype[0];
@@ -18,7 +19,6 @@ public class DimCheck extends DimensionsBaseVisitor<Object> {
             }
             else {
                if (DimensionsParser.dimTable.containsKey(dimensionName)) {
-                  System.out.println(ctx.type().getChildCount());
                   ErrorHandling.printError(ctx, "Dimension already exists");
                   validation =false;
                } else {
@@ -84,34 +84,37 @@ public class DimCheck extends DimensionsBaseVisitor<Object> {
          op = '*';
       }
       String unitName="";
+      String primtype="";
       Double ratio=0.0;
       if(op=='*'){
                ratio = Double.parseDouble(sepoper[0]);
-               if(DimensionsParser.dimTable.containsKey(dmname)){
-                  unitName=DimensionsParser.dimTable.get(dmname).getBaseUnit();
+               if(DimensionsParser.dimTable.containsKey(sepoper[1])){
+                  primtype=DimensionsParser.dimTable.get(sepoper[1]).getPrimType();
+                  unitName=DimensionsParser.dimTable.get(sepoper[1]).getBaseUnit();
                }
       }
       else if(op=='/'){
-               if(DimensionsParser.dimTable.containsKey(dmname)){
-                  unitName=DimensionsParser.dimTable.get(dmname).getBaseUnit();
+               if(DimensionsParser.dimTable.containsKey(sepoper[1])){
+                  primtype=DimensionsParser.dimTable.get(sepoper[1]).getPrimType();
+                  unitName=DimensionsParser.dimTable.get(sepoper[1]).getBaseUnit();
                }
                ratio = 1/Double.parseDouble(sepoper[0]);
       }
       else{
-         ErrorHandling.printError(ctx, "Dimension not defined!");
+         ErrorHandling.printError(ctx, "Operacao errada na conversao!");
          validation=false;
       }
       
       for(String dname : DimensionsParser.dimTable.keySet()){
             if(dname.equals(dmname)){
-               System.out.println( unitName + "-->"+ sepequal[0]);
+               System.out.println( unitName+ "-->"+ sepequal[0]);
                if(!DimensionsParser.dimTable.get(dname).checkConversion(unitName,sepequal[0],ratio)) {
                   ErrorHandling.printError(ctx, "Unidade já existente!");
                }
                flag=false;
             }
       }
-      if(flag){
+      if(!flag){
          ErrorHandling.printError(ctx, "Cannot add unit to not defined Dimension");
          validation=false;
       }

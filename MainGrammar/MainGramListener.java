@@ -41,17 +41,15 @@ public interface MainGramListener extends ParseTreeListener {
 	 */
 	void exitStat(MainGramParser.StatContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code checkPrint}
-	 * labeled alternative in {@link MainGramParser#print}.
+	 * Enter a parse tree produced by {@link MainGramParser#print}.
 	 * @param ctx the parse tree
 	 */
-	void enterCheckPrint(MainGramParser.CheckPrintContext ctx);
+	void enterPrint(MainGramParser.PrintContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code checkPrint}
-	 * labeled alternative in {@link MainGramParser#print}.
+	 * Exit a parse tree produced by {@link MainGramParser#print}.
 	 * @param ctx the parse tree
 	 */
-	void exitCheckPrint(MainGramParser.CheckPrintContext ctx);
+	void exitPrint(MainGramParser.PrintContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code importDimensionFile}
 	 * labeled alternative in {@link MainGramParser#importDims}.
@@ -350,6 +348,18 @@ public interface MainGramListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitGreatLowComparisonExpr(MainGramParser.GreatLowComparisonExprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code increExpr}
+	 * labeled alternative in {@link MainGramParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterIncreExpr(MainGramParser.IncreExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code increExpr}
+	 * labeled alternative in {@link MainGramParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitIncreExpr(MainGramParser.IncreExprContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code notExpr}
 	 * labeled alternative in {@link MainGramParser#expr}.

@@ -5,14 +5,14 @@ até que a densidade seja igual ou superior a 1.
 import dimensoes2 ; // abrir ficheiro que contem dimensões
 
 
-Volume v = 2 (l); 
-Massa m =  100 (g);
+Volume v = 2.0 (l); 
+Massa m =  100.0 (g);
 Densidade d;
 integer counter = 0;
 while ( d < 1)
 {
-    d = v / m;
-    m = m + 50 ;
+    d = m/v;
+    m = m + 50 ();
     counter ++ ;
 };
 println("Numero de ciclos:" +  counter);

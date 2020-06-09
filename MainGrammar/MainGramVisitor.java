@@ -32,12 +32,11 @@ public interface MainGramVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitStat(MainGramParser.StatContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code checkPrint}
-	 * labeled alternative in {@link MainGramParser#print}.
+	 * Visit a parse tree produced by {@link MainGramParser#print}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitCheckPrint(MainGramParser.CheckPrintContext ctx);
+	T visitPrint(MainGramParser.PrintContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code importDimensionFile}
 	 * labeled alternative in {@link MainGramParser#importDims}.
@@ -213,6 +212,13 @@ public interface MainGramVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitGreatLowComparisonExpr(MainGramParser.GreatLowComparisonExprContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code increExpr}
+	 * labeled alternative in {@link MainGramParser#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIncreExpr(MainGramParser.IncreExprContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code notExpr}
 	 * labeled alternative in {@link MainGramParser#expr}.

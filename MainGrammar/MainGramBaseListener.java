@@ -55,13 +55,13 @@ public class MainGramBaseListener implements MainGramListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterCheckPrint(MainGramParser.CheckPrintContext ctx) { }
+	@Override public void enterPrint(MainGramParser.PrintContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitCheckPrint(MainGramParser.CheckPrintContext ctx) { }
+	@Override public void exitPrint(MainGramParser.PrintContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -374,6 +374,18 @@ public class MainGramBaseListener implements MainGramListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitGreatLowComparisonExpr(MainGramParser.GreatLowComparisonExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterIncreExpr(MainGramParser.IncreExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitIncreExpr(MainGramParser.IncreExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
