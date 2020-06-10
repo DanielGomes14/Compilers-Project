@@ -160,7 +160,8 @@ public class Compiler extends MainGramBaseVisitor<ST> {
 
    @Override public ST visitEqualComparisonExpr(MainGramParser.EqualComparisonExprContext ctx) {
       
-      return visitChildren(ctx);
+      
+      
    }
 
    @Override public ST visitIntegerExpr(MainGramParser.IntegerExprContext ctx) {
@@ -220,7 +221,37 @@ public class Compiler extends MainGramBaseVisitor<ST> {
    }
 
    @Override public ST visitPowExpr(MainGramParser.PowExprContext ctx) {
-      return visitChildren(ctx);
+
+      ST res = stg.getInstanceOf("stats");
+
+      Symbol s = MainGramParser.symbolTable.get(id);
+      s.setVarName(newVar());
+
+      ST res = stg.getInstanceOf("powerExpression");
+      res.add("type",s.type().name());
+      res.add("var",s.varName());
+      res.add("e1",ctx.e1);
+      res.add("e2",ctx.e2);
+      
+
+         /*
+      ST res = stg.getInstanceOf("stats");
+      for(TerminalNode t: ctx.idList().ID())
+      {
+         String id = t.getText();
+         Symbol s = MainGramParser.symbolTable.get(id);
+         s.setVarName(newVar());
+         ST decl = stg.getInstanceOf("decl");
+         decl.add("type", s.type().name());
+         decl.add("var",s.varName());
+         res.add("stat", decl.render());
+      }
+      return res;
+
+      */
+   }
+
+
    }
 
    @Override public ST visitIdExpr(MainGramParser.IdExprContext ctx) {
