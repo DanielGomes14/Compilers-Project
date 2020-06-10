@@ -5,10 +5,6 @@ import java.io.PrintWriter;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 import org.stringtemplate.v4.*;
-
-
-
-
 public class MainGramMain {
    public static void main(String[] args) throws Exception {
       // create a CharStream that reads from standard input:
@@ -27,9 +23,6 @@ public class MainGramMain {
       if (parser.getNumberOfSyntaxErrors() == 0) {
          // print LISP-style tree:
          // System.out.println(tree.toStringTree(parser));
-         MainGramCheck visitor0 = new MainGramCheck();
-         visitor0.visit(tree);
-         if(!ErrorHandling.error()){
          Compiler compiler = new Compiler();
          compiler.visit(tree);
          String outputLang = "java";
@@ -60,5 +53,5 @@ public class MainGramMain {
             }
       }
    }
-   }
+   
 }

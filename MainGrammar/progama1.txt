@@ -16,6 +16,6 @@ for(Time t1 = 0(s); t1< 10; t1++)
 };
 vel = d/t;
 println ( "Velocidade: " + vel ); 
-if (vel == 20 (m/s))
+if (vel == 20(m/s))
 {
     println( "Velocidade de 20 m/s" );};

@@ -65,7 +65,7 @@ public class Compiler extends MainGramBaseVisitor<ST> {
       if(ctx.falseSL != null) {
          ST res = visit(ctx.falseSL);
          res.add("expr",visit(ctx.expr()).render());
-         res.add("true_stat", visit(ctx.trueSL.render());
+         res.add("true_stat", visit(ctx.trueSL.render()));
       } else {
          ST res = templates.getInstanceOf("condition");
          res.add("expr",visit(ctx.expr()).render());
@@ -80,7 +80,7 @@ public class Compiler extends MainGramBaseVisitor<ST> {
          res = templates.getInstanceOf("condition");
          res.add("false_stat", visit(ctx.statList()).render());
       } else {
-         res = visit(ctx.conditional())
+         res = visit(ctx.conditional());
       }
       return res;
    }
