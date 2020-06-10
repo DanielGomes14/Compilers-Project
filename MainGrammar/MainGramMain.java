@@ -31,7 +31,6 @@ public class MainGramMain {
          visitor0.visit(tree);
          if(!ErrorHandling.error()){
          Compiler compiler = new Compiler();
-         compiler.visit(tree);
          String outputLang = "java";
 
             if (!compiler.validTarget(outputLang)) {
@@ -42,7 +41,7 @@ public class MainGramMain {
             compiler.setTarget(outputLang);
             ST code = compiler.visit(tree);
 
-            String outputFileName = args[0].split("\\.")[0];
+            String outputFileName = "output";
 
             String outputFileExtension =  "." + outputLang;
 

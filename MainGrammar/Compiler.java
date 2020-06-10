@@ -24,13 +24,14 @@ public class Compiler extends MainGramBaseVisitor<ST> {
 
    @Override public ST visitStatList(MainGramParser.StatListContext ctx) {
       ST res = stg.getInstanceOf("stats");
-      for(MainGramParser.StatContext sc: ctx.stat())
-         res.add("stat", visit(sc));
+      for(MainGramParser.StatContext sc: ctx.stat()){
+         res.add("stat", visit(sc));}
+      return res;   
    }
 
 
    @Override public ST visitPrint(MainGramParser.PrintContext ctx) {
-      ST res = stg.getInstanceOf("show");
+      ST res = stg.getInstanceOf("print");
       res.add("stat", visit(ctx.expr()));
       //res.add("type", ctx.expr().eType.name());
       res.add("expr",ctx.expr().varName);
@@ -57,16 +58,37 @@ public class Compiler extends MainGramBaseVisitor<ST> {
    }
 
    @Override public ST visitDecAssign(MainGramParser.DecAssignContext ctx) {
-      return visitChildren(ctx);
+      
+      ST res = stg.getInstanceOf("stats");
+      for(TerminalNode t: ctx.declaration().idList().ID())
+      {
+         String id = t.getText();
+         Symbol s = MainGramParser.symbolTable.get(id);
+         s.setVarName(newVar());
+         ST decl = stg.getInstanceOf("decl");
+         ST assign = stg.getInstanceOf("assign");
+         decl.add("type", s.type().name());
+         decl.add("var",s.varName());
+         assResult.add("stat", visit(ctx.expr()).render());
+         assign.add("var",s.varName());
+         assign.add("value", ctx.expr().varName);
+         res.add("stat", decl.render());
+         res.add("stat",assign.render());
+      }
+      return res;
    }
 
    @Override public ST visitAssign(MainGramParser.AssignContext ctx) {
       ST res = stg.getInstanceOf("assign");
-      String id = ctx.ID().getText();
-      Symbol s = MainGramParser.symbolTable.get(id);
-      res.add("stat", visit(ctx.expr()).render());
-      res.add("var", s.varName());
-      res.add("value", ctx.expr().varName);
+      for(TerminalNode t: ctx.idList().ID())
+      {
+         String id = t.getText();
+         Symbol s = MainGramParser.symbolTable.get(id);
+         res.add("stat", visit(ctx.expr()).render());
+         res.add("var", s.varName());
+         res.add("value", ctx.expr().varName);
+        
+      }
       return res;
    }
 /*
@@ -123,7 +145,12 @@ public class Compiler extends MainGramBaseVisitor<ST> {
    }
 
    @Override public ST visitStrExpr(MainGramParser.StrExprContext ctx) {
-      return visitChildren(ctx);
+      ST res = stg.getInstanceOf("decl");
+      ctx.varName = newVar();
+      res.add("type", "string");
+      res.add("var", ctx.varName);
+      res.add("value", ctx.STRING().getText());
+      return res;
    }
 
    @Override public ST visitAddSubExpr(MainGramParser.AddSubExprContext ctx) {
@@ -132,6 +159,7 @@ public class Compiler extends MainGramBaseVisitor<ST> {
     }
 
    @Override public ST visitEqualComparisonExpr(MainGramParser.EqualComparisonExprContext ctx) {
+      
       return visitChildren(ctx);
    }
 
@@ -154,7 +182,12 @@ public class Compiler extends MainGramBaseVisitor<ST> {
    }
 
    @Override public ST visitBooleanExpr(MainGramParser.BooleanExprContext ctx) {
-      return visitChildren(ctx);
+      ST res = stg.getInstanceOf("decl");
+      ctx.varName = newVar();
+      res.add("type", "boolean");
+      res.add("var", ctx.varName);
+      res.add("value", ctx.BOOLEAN().getText());
+      return res;
    }
 
    @Override public ST visitInputExpr(MainGramParser.InputExprContext ctx) {
@@ -182,7 +215,8 @@ public class Compiler extends MainGramBaseVisitor<ST> {
    }
 
    @Override public ST visitMultDivExpr(MainGramParser.MultDivExprContext ctx) {
-      return visitChildren(ctx);
+      ctx.varName = newVar();
+      return binaryExpression(ctx, visit(ctx.e1).render(), visit(ctx.e2).render(), ctx.eType.name(), ctx.varName, ctx.e1.varName, ctx.op.getText(), ctx.e2.varName);  
    }
 
    @Override public ST visitPowExpr(MainGramParser.PowExprContext ctx) {
@@ -205,7 +239,7 @@ public class Compiler extends MainGramBaseVisitor<ST> {
       res.add("type", type);
       res.add("var", var);
       res.add("e1", e1Var);
-      res.add("op", translateOp(op));
+      res.add("op", op);
       res.add("e2", e2Var);
       return res;
    }
@@ -213,8 +247,7 @@ public class Compiler extends MainGramBaseVisitor<ST> {
    public boolean validTarget(String target) {
       File f = new File(target+".stg");
 
-      return ("java".equalsIgnoreCase(target) || "c".equalsIgnoreCase(target)) &&
-             f.exists() && f.isFile() && f.canRead();
+      return (f.exists() && f.isFile() && f.canRead());
    }
 
    public void setTarget(String target) {

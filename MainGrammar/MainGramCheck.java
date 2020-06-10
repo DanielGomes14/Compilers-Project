@@ -34,7 +34,9 @@ public class MainGramCheck extends MainGramBaseVisitor<Boolean> {
    @Override
    public Boolean visitMain(MainGramParser.MainContext ctx) {
       Boolean validation=true;
-      if(ctx.importDims()!=null){
+    
+      if(ctx.importDims(0)!=null){
+         System.out.println("pads");
          validation=visit(ctx.importDims(0));
       }
       if(validation){
@@ -74,7 +76,7 @@ public class MainGramCheck extends MainGramBaseVisitor<Boolean> {
 
    @Override
    public Boolean visitImportDimensionFile(MainGramParser.ImportDimensionFileContext ctx) {
-      boolean validation = true;
+      Boolean validation = true;
       
       String fileName = ctx.ID().getText() + ".txt";
       InputStream in_stream = null;
