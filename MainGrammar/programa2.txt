@@ -9,10 +9,10 @@ Volume v = 2.0 (l);
 Massa m =  100.0 (g);
 Densidade d;
 integer counter = 0;
-while ( d < 1)
+while ( d < 1 )
 {
     d = m/v;
-    m = m + 50 ();
+    m = m * 50 (s);
     counter ++ ;
 };
 println("Numero de ciclos:" +  counter);

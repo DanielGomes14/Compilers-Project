@@ -15,7 +15,7 @@ public class MainGramCheck extends MainGramBaseVisitor<Boolean> {
    private final BooleanType booleanType = new BooleanType();
    private final StringType stringType = new StringType();
 
-   private Type getTypeExpr(Type t1,Type t2,String op){
+   private Type fecthType(Type t1,Type t2,String op){
       Type r = null;
       if(t1.isNumeric() && t2.isNumeric()){
          if(t1.name().equals("real") || t2.name().equals("real")){
@@ -117,7 +117,7 @@ public class MainGramCheck extends MainGramBaseVisitor<Boolean> {
                if (validation){
                Type tp = ctx.declaration().type().res; 
                if (tp.getClass().getName().equals("Dimension")) {
-                  if (ctx.expr().uni != null) {
+                  if (ctx.expr().uni != null && !ctx.expr().uni.equals("noUnit")) {
                      unit = ctx.expr().uni.replace("(", "").replace(")", "");
                      Dimension dim = (Dimension) tp; // dimension is a type
                      if (dim.checkUnit(unit)) { // check if unit is in the list of units of Dimension
@@ -169,7 +169,7 @@ public class MainGramCheck extends MainGramBaseVisitor<Boolean> {
             } else {
                Symbol sb = MainGramParser.symbolTable.get(id);
                if (sb.type().getClass().getName().equals("Dimension")) {
-                  if (ctx.expr().uni != null) {
+                  if (ctx.expr().uni != null && !ctx.expr().uni.equals("noUnit")) {
                      String unit = ctx.expr().uni;
                      Dimension dim = (Dimension) sb.type(); // dimension is a type
                      System.out.println(dim.getBaseUnit());
@@ -211,7 +211,6 @@ public class MainGramCheck extends MainGramBaseVisitor<Boolean> {
          if (res) {
             Type type = ctx.type().res;
             Symbol s = new Symbol(typeStr, type);
-            s.setValueDefined();
             MainGramParser.symbolTable.put(id, s);
          }
       }
@@ -263,13 +262,10 @@ public class MainGramCheck extends MainGramBaseVisitor<Boolean> {
                ErrorHandling.printError(ctx, "Not a valid conditional expression in a for statement");
                validation = false;
             }
-           // ctx.expr(0).eType=booleanType;
             if (!ctx.expr(1).eType.isNumeric()) {
                ErrorHandling.printError(ctx, "Increment expression must be a numeric expression");
                validation = false;
             }
-            //ctx.expr(1).eType=booleanType;
-
          }
       }
       return validation;
@@ -394,7 +390,7 @@ public class MainGramCheck extends MainGramBaseVisitor<Boolean> {
             else{
                ctx.uni="Void";
             }
-            Type t = getTypeExpr(ctx.e1.eType,ctx.e2.eType, ctx.op.getText());
+            Type t = fecthType(ctx.e1.eType,ctx.e2.eType, ctx.op.getText());
             if ( t == null){
                ErrorHandling.printError(ctx, "Cannot apply operator\\" + ctx.op.getText() + "\" to non numeric operands");
             }
@@ -411,14 +407,20 @@ public class MainGramCheck extends MainGramBaseVisitor<Boolean> {
    public Boolean visitEqualComparisonExpr(MainGramParser.EqualComparisonExprContext ctx) {
      boolean validation =  visit(ctx.e1) && visit(ctx.e2);
       if (validation) {
-         if ((ctx.e1.eType.conformsTo(stringType) || ctx.e2.eType.conformsTo(stringType))
-               && !ctx.e1.eType.conformsTo(ctx.e2.eType)) {
-            ErrorHandling.printError(ctx, "Cannot compare \"" + ctx.e1.eType + "\" with  \"" + ctx.e2.eType);
+         if ((ctx.e1.eType.conformsTo(stringType) || ctx.e2.eType.conformsTo(stringType)) && !ctx.e1.eType.conformsTo(ctx.e2.eType)) {
+            ErrorHandling.printError(ctx, "Cannot compare \"" + ctx.e1.eType + " with type "  + ctx.e2.eType);
             validation = false;
          } else if ((ctx.e1.eType.conformsTo(booleanType) || ctx.e2.eType.conformsTo(booleanType))
                && !ctx.e1.eType.conformsTo(ctx.e2.eType)) {
-            ErrorHandling.printError(ctx, "Cannot compare \"" + ctx.e1.eType + "\" with  \"" + ctx.e2.eType);
+            ErrorHandling.printError(ctx, "Cannot compare \"" + ctx.e1.eType +  " with type " + ctx.e2.eType);
             validation = false;
+         }
+         else{
+          
+               if(!ctx.e1.eType.conformsTo(ctx.e2.eType)){
+                  ErrorHandling.printError(ctx, "Cannot compare \"" + ctx.e1.eType +  " with type "  + ctx.e2.eType);
+                  validation=false;
+                              }
          }
       }
       ctx.eType = booleanType;
@@ -431,13 +433,15 @@ public class MainGramCheck extends MainGramBaseVisitor<Boolean> {
    public Boolean visitIntegerExpr(MainGramParser.IntegerExprContext ctx) {
       boolean  validation = true;
       ctx.eType = integerType;
-      boolean flag= true;
+      boolean flag= false;
       if (ctx.unit() != null) {
          validation =  visit(ctx.unit());
          if (validation) {
             String uni = ctx.unit().getText().replace("(", "").replace(")", "");
+            System.out.println("--->"+ uni);
             for(Dimension dd : DimensionsParser.dimTable.values()){
                if(!dd.checkUnit(uni)){
+                  System.out.println(";" +uni);
                   ctx.uni=uni;
                   ctx.dim=dd.name();
                   flag=true;
@@ -522,13 +526,18 @@ public class MainGramCheck extends MainGramBaseVisitor<Boolean> {
 
    @Override
    public Boolean visitGreatLowComparisonExpr(MainGramParser.GreatLowComparisonExprContext ctx) {
-      boolean validation =  visit(ctx.e1) &&  visit(ctx.e2);
+      Boolean validation =  visit(ctx.e1) &&  visit(ctx.e2);
+      System.out.println(ctx.e1.getText() + ":"+ ctx.e1.uni);
+      System.out.println(ctx.e2.getText() + ":"+ ctx.e2.uni);
       if (validation) {
          if (!(ctx.e1.eType.isNumeric() || ctx.e2.eType.isNumeric())) {
             ErrorHandling.printError(ctx, "Cannot Use operator\"" + ctx.op + "\"for Non Numeric Types of Expressions");
             validation = false;
          }
-         // ver depois esta cena para as dimensoes.. verificar?
+         if(!ctx.e1.uni.equals("noUnit")&& ctx.e2.uni.equals("noUnit") || ctx.e1.uni.equals("noUnit")&& !ctx.e2.uni.equals("noUnit")  ){
+            ErrorHandling.printError(ctx,"Cannot compare an expression with no Dimension to a expression with Dimensions associated!");
+            validation=false;
+         }
          ctx.eType = booleanType;
          ctx.dim = "noDim";
          ctx.uni = "noUnit";
@@ -615,12 +624,13 @@ public class MainGramCheck extends MainGramBaseVisitor<Boolean> {
                }
            }
            if(!flag) ctx.dim="noDim";
+           /*
            if(ctx.e1.eType.conformsTo(realType) || ctx.e2.eType.conformsTo(realType)){
               ctx.eType=realType;
            }
            else ctx.eType=integerType;
-           
-
+           */
+          ctx.eType=fecthType(ctx.e1.eType,ctx.e2.eType, ctx.op.getText());
          }
       }
       return validation;
@@ -653,6 +663,7 @@ public class MainGramCheck extends MainGramBaseVisitor<Boolean> {
             ctx.eType = sb.type();
             ctx.uni = sb.unitName;
             ctx.dim = sb.dimensionName;
+
          } else {
             ErrorHandling.printError(ctx, "Variable \"" + id + "\"  has no value associated");
             validation = false;

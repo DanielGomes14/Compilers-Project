@@ -19,17 +19,14 @@ primitiveTypes ::= [
     "integer" : "int",
     "real" : "double",
     "boolean" : "boolean",
-    "string" : "String",
-    default : "null"
-    
+    "string" : "String"
 ]
 
 assign(var, value) ::= "<var> = <value>;"
-decl(type, var, value) ::= "<typeValue.(type)> <var> = <value>;"
+decl(type, var, value) ::= "<if(primitiveTypes(type))> <primitiveTypes(type)> <else> <type> <endif><var> <if(value)>= <value><endif>;"
 
-condition(stat, var, true_stat, false_stat) ::= <<
-<stats(stat)>
-if(<var>) {
+condition(expr, true_stat, false_stat) ::= <<
+if(<expr>) {
     <true_stat>
 } <if(false_stat)>
 else {
