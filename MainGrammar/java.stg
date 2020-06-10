@@ -1,0 +1,132 @@
+booleanValue ::= [
+   "true":"true",
+   "false":"false",
+   default:"null"
+]
+
+typeValue ::= [
+   "integer":"int",
+   "real":"double",
+   "boolean":"boolean",
+   "string" : "String",
+   default:"null"
+]
+
+typeFormat ::= [
+   "integer":"",
+   "real":"",
+   "boolean":"",
+   "string":"",
+   default:"null"
+]
+
+
+powerTypeCast ::= [
+   "integer" : "(int)",
+   "real":"",
+   default:"null"
+]
+
+Operators ::= [
+    "*"  : "*",
+    "/"  : "/",
+    "+"  : "+",
+    "-"  : "-",
+    "==" : "==",
+    "!=" : "!=",
+    ">"  : ">",
+    "<"  : "<",
+    "<=" : "<=",
+    ">=" : ">=",
+    "!"  : "!",
+    default    : "null"
+]
+
+
+incrementVar ::= [
+   "++" : "++",
+   "--" : "--"
+]
+
+
+
+
+module(name, stat) ::= <<
+import java.util.Scanner;
+public class <name> {
+    public static void main (String[] args) {
+       Scanner sc = new Scanner (System.in);
+        <stats(stat)>
+    }
+}
+>>
+
+
+
+
+//initialize the variable
+init(value) ::= "<if(value)> = <value><endif>"
+
+//declare a variable and if theres a value assign it 
+decl(type, var, value) ::= "<typeValue.(type)> <var><init(value)>;"
+
+stats(stat) ::= <<
+<if(stat)><stat; separator="\n"><endif>
+>>
+
+assign(stat,var,value) ::= <<
+<stats(stat)>
+<var> = <value>;
+>>
+
+//increment variable
+inc(stat,var, op) ::= "<var> <incrementVar.(op)>;"
+
+
+
+print(stat,expr) ::= <<
+<stats(stat)>
+System.out.println(<expr>);
+>>
+
+conditional(expr, true_stat, false_stat) ::= <<
+if(<expr>) {
+    <true_stat>
+} <if(false_stat)>
+else {
+    <false_stat>
+}
+<endif>
+>>
+
+
+
+
+
+//in order to make for loops we can use the while
+
+conditionloop(statout,statebefore,stateafter,var) ::= <<
+<if(statout)> <stats(statout)> <endif>
+while (true) {
+	<stats(statebefore)>
+	if (<var>) 
+	   break;
+	<stats(stateafter)>
+} 
+>>
+
+
+binaryExpression(stat,type,var,e1,op,e2) ::= <<
+<stats(stat)>
+<decl(type,var,[e1," ",Operators.(op)," ",e2])>
+>>
+
+
+powerExpression(type,var,e1,e2) ::= "<decl(type,var,[powerTypeCast.(type),\"Math.pow(\",e1,\",\",e2,\")\"])>"
+
+literalBoolean(value) ::= "<booleanValue.(value)>"
+
+
+
+
+
