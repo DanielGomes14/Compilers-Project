@@ -397,6 +397,18 @@ public interface MainGramListener extends ParseTreeListener {
 	 */
 	void exitMultDivExpr(MainGramParser.MultDivExprContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code andOrExpr}
+	 * labeled alternative in {@link MainGramParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterAndOrExpr(MainGramParser.AndOrExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code andOrExpr}
+	 * labeled alternative in {@link MainGramParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitAndOrExpr(MainGramParser.AndOrExprContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code powExpr}
 	 * labeled alternative in {@link MainGramParser#expr}.
 	 * @param ctx the parse tree

@@ -241,6 +241,13 @@ public interface MainGramVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitMultDivExpr(MainGramParser.MultDivExprContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code andOrExpr}
+	 * labeled alternative in {@link MainGramParser#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAndOrExpr(MainGramParser.AndOrExprContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code powExpr}
 	 * labeled alternative in {@link MainGramParser#expr}.
 	 * @param ctx the parse tree

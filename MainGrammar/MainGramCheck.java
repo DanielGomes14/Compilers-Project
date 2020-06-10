@@ -410,17 +410,17 @@ public class MainGramCheck extends MainGramBaseVisitor<Boolean> {
      boolean validation =  visit(ctx.e1) && visit(ctx.e2);
       if (validation) {
          if ((ctx.e1.eType.conformsTo(stringType) || ctx.e2.eType.conformsTo(stringType)) && !ctx.e1.eType.conformsTo(ctx.e2.eType)) {
-            ErrorHandling.printError(ctx, "Cannot compare \"" + ctx.e1.eType + " with type "  + ctx.e2.eType);
+            ErrorHandling.printError(ctx, "Cannot compare \"" + ctx.e1.eType + "\" with type "  + ctx.e2.eType);
             validation = false;
          } else if ((ctx.e1.eType.conformsTo(booleanType) || ctx.e2.eType.conformsTo(booleanType))
                && !ctx.e1.eType.conformsTo(ctx.e2.eType)) {
-            ErrorHandling.printError(ctx, "Cannot compare \"" + ctx.e1.eType +  " with type " + ctx.e2.eType);
+            ErrorHandling.printError(ctx, "Cannot compare \"" + ctx.e1.eType +  "\" with type " + ctx.e2.eType);
             validation = false;
          }
          else{
           
                if(!ctx.e1.eType.conformsTo(ctx.e2.eType)){
-                  ErrorHandling.printError(ctx, "Cannot compare \"" + ctx.e1.eType +  " with type "  + ctx.e2.eType);
+                  ErrorHandling.printError(ctx, "Cannot compare \"" + ctx.e1.eType +  "\" with type "  + ctx.e2.eType);
                   validation=false;
                               }
          }
@@ -430,6 +430,23 @@ public class MainGramCheck extends MainGramBaseVisitor<Boolean> {
       ctx.dim = "noDim";
       return validation;
    }
+
+   @Override
+   public Boolean visitAndOrExpr(MainGramParser.AndOrExprContext ctx){
+      Boolean validation = visit(ctx.e1) && visit (ctx.e2);
+      if(validation){
+         if( !ctx.e1.eType.conformsTo(booleanType) || !ctx.e2.eType.conformsTo(booleanType)){
+            ErrorHandling.printError(ctx, "Cannot use operator \"" + ctx.op.getText() + "\" with these operands!");
+            validation=false;
+         }
+         ctx.eType=booleanType;
+         ctx.dim="noDim";
+         ctx.uni="noUnit";
+      }
+   
+      return validation;
+   }
+
 
    @Override
    public Boolean visitIntegerExpr(MainGramParser.IntegerExprContext ctx) {

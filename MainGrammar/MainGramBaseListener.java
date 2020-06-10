@@ -427,6 +427,18 @@ public class MainGramBaseListener implements MainGramListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterAndOrExpr(MainGramParser.AndOrExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitAndOrExpr(MainGramParser.AndOrExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterPowExpr(MainGramParser.PowExprContext ctx) { }
 	/**
 	 * {@inheritDoc}

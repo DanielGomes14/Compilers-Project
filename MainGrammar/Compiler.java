@@ -43,37 +43,30 @@ public class Compiler extends MainGramBaseVisitor<ST> {
    }
 
    @Override public ST visitDeclaration(MainGramParser.DeclarationContext ctx) {
-      ST res = stg.getInstanceOf("stats");
+      ST res = stg.getInstanceOf("decl");
       for(TerminalNode t: ctx.idList().ID())
       {
          String id = t.getText();
          Symbol s = MainGramParser.symbolTable.get(id);
          s.setVarName(newVar());
-         ST decl = stg.getInstanceOf("decl");
-         decl.add("type", s.type().name());
-         decl.add("var",s.varName());
-         res.add("stat", decl.render());
-      }
+         res.add("type", s.type().name());
+         res.add("var",s.varName());
+     }
       return res;
    }
 
    @Override public ST visitDecAssign(MainGramParser.DecAssignContext ctx) {
       
-      ST res = stg.getInstanceOf("stats");
+      ST res = stg.getInstanceOf("decl");
       for(TerminalNode t: ctx.declaration().idList().ID())
       {
          String id = t.getText();
          Symbol s = MainGramParser.symbolTable.get(id);
          s.setVarName(newVar());
-         ST decl = stg.getInstanceOf("decl");
-         ST assign = stg.getInstanceOf("assign");
-         decl.add("type", s.type().name());
-         decl.add("var",s.varName());
-         assign.add("stat", visit(ctx.expr()).render());
-         assign.add("var",s.varName());
-         assign.add("value", ctx.expr().varName);
-         res.add("stat", decl.render());
-         res.add("stat",assign.render());
+         res.add("stat", visit(ctx.expr()));
+         res.add("type", s.type().name());
+         res.add("var",s.varName());
+         res.add("value",ctx.expr().varName);
       }
       return res;
    }
@@ -162,7 +155,9 @@ public class Compiler extends MainGramBaseVisitor<ST> {
       
       return visitChildren(ctx);
    }
-
+   @Override public ST  visitAndOrExpr(MainGramParser.AndOrExprContext ctx){
+      return visitChildren(ctx);
+   }
    @Override public ST visitIntegerExpr(MainGramParser.IntegerExprContext ctx) {
       ST res = stg.getInstanceOf("decl");
       ctx.varName = newVar();

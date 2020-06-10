@@ -67,6 +67,7 @@ expr returns[Type eType, String varName, String dim, String uni]:               
     | e1=expr op=('+' | '-') e2=expr                #addSubExpr
     | e1=expr op=('==' | '!=') e2=expr              #equalComparisonExpr
     | e1=expr op=('>=' | '<=' | '>' | '<') e2=expr  #greatLowComparisonExpr
+    |e1=expr op=('&&' | '||') e2=expr               #andOrExpr
     | '(' e=expr ')'                                #parenExpr
     | input                                         #inputExpr
     |increment                                      #increExpr

@@ -258,6 +258,13 @@ public class MainGramBaseVisitor<T> extends AbstractParseTreeVisitor<T> implemen
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
+	@Override public T visitAndOrExpr(MainGramParser.AndOrExprContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
 	@Override public T visitPowExpr(MainGramParser.PowExprContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
