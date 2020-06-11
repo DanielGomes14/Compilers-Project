@@ -5,6 +5,6 @@ public class output {
         int v2 = 2;
         int v1 = v2;
         v1 ++;
-        int v3;
+        int v3 = v1;
     }
 }

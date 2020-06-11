@@ -118,7 +118,11 @@ public class Compiler extends MainGramBaseVisitor<ST> {
    }
 
    @Override public ST visitIncrement(MainGramParser.IncrementContext ctx) {
-      return visitChildren(ctx);
+      ST res = stg.getInstanceOf("inc");
+      String id = ctx.increment().ID().getText();
+      res.add("var",MainGramParser.symbolTable.get(id).varName());
+      res.add("op",ctx.increment().incre.getText());
+      return res;
    }
 
    /*
@@ -203,12 +207,9 @@ public class Compiler extends MainGramBaseVisitor<ST> {
    @Override
       public ST visitIncreExpr(MainGramParser.IncreExprContext ctx){   
       ST res = stg.getInstanceOf("inc");
-      ST assignment= stg.getInstanceOf("assign");
-      assignment.add("var",ctx.varName);
-      assignment.add("result")
       String id = ctx.increment().ID().getText();
-      System.out.println(MainGramParser.symbolTable.get(id).varName());
-      res.add("var",MainGramParser.symbolTable.get(id).varName());
+      ctx.varName=MainGramParser.symbolTable.get(id).varName();
+      res.add("var",ctx.varName);
       res.add("op",ctx.increment().incre.getText());
       return res;
       }  
