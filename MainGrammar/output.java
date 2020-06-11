@@ -8,8 +8,8 @@ public class output {
         int v6 = 5;
         int v2 = v3 + v6;
         int v1 = v2;
-
-        int v8 = 5;
+        System.out.print("olabro");
+        int v8 = sc.nextInt();
         int v7 = v8;
 
         int v9 = 4;

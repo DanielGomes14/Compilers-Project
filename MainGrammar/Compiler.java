@@ -110,13 +110,14 @@ public class Compiler extends MainGramBaseVisitor<ST> {
    }
 
    @Override public ST visitInput(MainGramParser.InputContext ctx) {
-      return visitChildren(ctx);
+    return visitChildren(ctx);
    }
 
    @Override public ST visitIncrement(MainGramParser.IncrementContext ctx) {
       return visitChildren(ctx);
    }
 
+   /*
    @Override public ST visitTypeInt(MainGramParser.TypeIntContext ctx) {
       return visitChildren(ctx);
    }
@@ -136,7 +137,7 @@ public class Compiler extends MainGramBaseVisitor<ST> {
    @Override public ST visitDimensionType(MainGramParser.DimensionTypeContext ctx) {
       return visitChildren(ctx);
    }
-
+*/
    @Override public ST visitStrExpr(MainGramParser.StrExprContext ctx) {
       ST res = stg.getInstanceOf("decl");
       ctx.varName = newVar();
@@ -186,8 +187,14 @@ public class Compiler extends MainGramBaseVisitor<ST> {
    }
 
    @Override public ST visitInputExpr(MainGramParser.InputExprContext ctx) {
-      return visitChildren(ctx);
-   }
+      ST res = stg.getInstanceOf("input");
+      ctx.varName=newVar();
+      visit(ctx.input().type());
+      res.add("type",ctx.input().type().res);
+      res.add("var",ctx.varName);
+      res.add("prompt",ctx.input().STRING().getText());
+      return res;
+      }
 
    @Override public ST visitParenExpr(MainGramParser.ParenExprContext ctx) {
       return visitChildren(ctx);

@@ -1,4 +1,4 @@
 integer d1 = 2*4+5 ;
-integer d2 =5;
+integer d2 = scan("olabro",integer);
 println(4);
 string s1 = "coiso";
