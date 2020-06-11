@@ -1,3 +1,4 @@
+
 public abstract class Type
 {
    protected Type(String name) {
@@ -15,6 +16,10 @@ public abstract class Type
 
    public boolean isNumeric() {
       return false;
+   }
+
+   public String getPrimType( ){
+     return name;
    }
 
    @Override

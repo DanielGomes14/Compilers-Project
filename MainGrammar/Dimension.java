@@ -3,6 +3,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 public class Dimension extends Type{
 	/*
 	name is the Dimension name, like Length for example
@@ -72,7 +73,7 @@ public class Dimension extends Type{
 		}
 		return null;
 	}
-
+	@Override
 	public String getPrimType(){
 		return this.primtype;
 	}
@@ -89,11 +90,13 @@ public class Dimension extends Type{
 		}
       return validation;
    }
+   
 
-   public String toString()
-   {
+
+   public String toString(){
       return "" + this.name;
    }
+
 }
 
 

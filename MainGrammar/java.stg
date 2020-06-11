@@ -90,7 +90,7 @@ assign(stat,var,value) ::= <<
 >>
 
 //increment variable
-inc(stat,var, op) ::= "<var> <incrementVar.(op)>;"
+inc(var, op) ::= "<var> <incrementVar.(op)>;"
 
 
 

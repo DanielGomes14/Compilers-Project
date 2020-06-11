@@ -1,9 +1,13 @@
 import java.io.File;
 import java.util.Iterator;
+
+import javax.print.DocFlavor.STRING;
+
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import org.stringtemplate.v4.*;
+
 public class Compiler extends MainGramBaseVisitor<ST> {
    protected int varCount = 0;
    protected String target = "java"; // default
@@ -49,7 +53,7 @@ public class Compiler extends MainGramBaseVisitor<ST> {
          String id = t.getText();
          Symbol s = MainGramParser.symbolTable.get(id);
          s.setVarName(newVar());
-         res.add("type", s.type().name());
+         res.add("type", s.type().getPrimType());
          res.add("var",s.varName());
      }
       return res;
@@ -64,7 +68,7 @@ public class Compiler extends MainGramBaseVisitor<ST> {
          Symbol s = MainGramParser.symbolTable.get(id);
          s.setVarName(newVar());
          res.add("stat", visit(ctx.expr()));
-         res.add("type", s.type().name());
+         res.add("type", s.type().getPrimType());
          res.add("var",s.varName());
          res.add("value",ctx.expr().varName);
       }
@@ -149,7 +153,7 @@ public class Compiler extends MainGramBaseVisitor<ST> {
 
    @Override public ST visitAddSubExpr(MainGramParser.AddSubExprContext ctx) {
       ctx.varName = newVar();
-      return binaryExpression(ctx, visit(ctx.e1).render(), visit(ctx.e2).render(), ctx.eType.name(), ctx.varName, ctx.e1.varName, ctx.op.getText(), ctx.e2.varName);  
+      return binaryExpression(ctx, visit(ctx.e1).render(), visit(ctx.e2).render(), ctx.eType.getPrimType(), ctx.varName, ctx.e1.varName, ctx.op.getText(), ctx.e2.varName);  
     }
 
    @Override public ST visitEqualComparisonExpr(MainGramParser.EqualComparisonExprContext ctx) {
@@ -190,48 +194,92 @@ public class Compiler extends MainGramBaseVisitor<ST> {
       ST res = stg.getInstanceOf("input");
       ctx.varName=newVar();
       visit(ctx.input().type());
-      res.add("type",ctx.input().type().res);
+      res.add("type",ctx.input().type().res.getPrimType());
       res.add("var",ctx.varName);
       res.add("prompt",ctx.input().STRING().getText());
       return res;
       }
 
+   @Override
+      public ST visitIncreExpr(MainGramParser.IncreExprContext ctx){   
+      ST res = stg.getInstanceOf("inc");
+      ST assignment= stg.getInstanceOf("assign");
+      assignment.add("var",ctx.varName);
+      assignment.add("result")
+      String id = ctx.increment().ID().getText();
+      System.out.println(MainGramParser.symbolTable.get(id).varName());
+      res.add("var",MainGramParser.symbolTable.get(id).varName());
+      res.add("op",ctx.increment().incre.getText());
+      return res;
+      }  
    @Override public ST visitParenExpr(MainGramParser.ParenExprContext ctx) {
-      return visitChildren(ctx);
+      ST result = visit(ctx.expr());
+
+      ctx.varName=ctx.expr().varName;
+      return result;
    }
 
    @Override public ST visitGreatLowComparisonExpr(MainGramParser.GreatLowComparisonExprContext ctx) {
-      return visitChildren(ctx);
+      ctx.varName = newVar();
+      return binaryExpression(ctx, visit(ctx.e1).render(), visit(ctx.e2).render(), ctx.eType.name(), ctx.varName, ctx.e1.varName, ctx.op.getText(), ctx.e2.varName);
    }
 
-   @Override public ST visitIncreExpr(MainGramParser.IncreExprContext ctx) {
-      return visitChildren(ctx);
-   }
+
 
    @Override public ST visitNotExpr(MainGramParser.NotExprContext ctx) {
-      return visitChildren(ctx);
+      ST res = stg.getInstanceOf("binaryOperator");
+      ctx.varName = newVar();
+      res.add("type", ctx.eType.getPrimType());
+      res.add("var", ctx.varName);
+      visit(ctx.expr());
+      res.add("e1", ctx.expr().varName);
+      res.add("op", "!");
+      return res;
    }
 
    @Override public ST visitSignExpr(MainGramParser.SignExprContext ctx) {
-      return visitChildren(ctx);
+      ST res = stg.getInstanceOf("binaryOperator");
+      ctx.varName = newVar();
+      res.add("type", ctx.eType.getPrimType());
+      res.add("var", ctx.varName);
+      visit(ctx.expr());
+      res.add("e1", ctx.expr().varName);
+      res.add("op", ctx.sign.getText());
+      return res;
    }
 
    @Override public ST visitMultDivExpr(MainGramParser.MultDivExprContext ctx) {
       ctx.varName = newVar();
-      return binaryExpression(ctx, visit(ctx.e1).render(), visit(ctx.e2).render(), ctx.eType.name(), ctx.varName, ctx.e1.varName, ctx.op.getText(), ctx.e2.varName);  
+      return binaryExpression(ctx, visit(ctx.e1).render(), visit(ctx.e2).render(), ctx.eType.getPrimType(), ctx.varName, ctx.e1.varName, ctx.op.getText(), ctx.e2.varName);  
    }
 
    @Override public ST visitPowExpr(MainGramParser.PowExprContext ctx) {
-      return visitChildren(ctx);
+      ST res = stg.getInstanceOf("powerExpression");
+      ctx.varName = newVar();
+      res.add("type", ctx.eType.getPrimType());
+      res.add("var", ctx.varName);
+      res.add("e1", ctx.e1.varName);
+      res.add("e2", ctx.e2.varName);
+      res.add("stat", visit(ctx.e1).render());
+      res.add("stat", visit(ctx.e2).render());
+      return res;
    }
 
    @Override public ST visitIdExpr(MainGramParser.IdExprContext ctx) {
-      return visitChildren(ctx);
+      ST res = stg.getInstanceOf("decl");
+      String id = ctx.ID().getText();
+      ctx.varName = newVar();
+      res.add("type",ctx.eType.getPrimType());
+      res.add("var",ctx.varName);
+      res.add("value",MainGramParser.symbolTable.get(id).varName());
+      return res;
    }
+
 
    @Override public ST visitUnitCheck(MainGramParser.UnitCheckContext ctx) {
       return visitChildren(ctx);
    }
+
 
 
    protected ST binaryExpression(ParserRuleContext ctx, String e1Stats, String e2Stats, String type, String var, String e1Var, String op, String e2Var) {

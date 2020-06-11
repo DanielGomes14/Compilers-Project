@@ -8,7 +8,7 @@ public class IntegerType extends Type {
    }
 
    @Override public boolean conformsTo(Type other) {
-      return super.conformsTo(other) || other.name().equals("real");
+      return super.conformsTo(other);
    }
 
 }
