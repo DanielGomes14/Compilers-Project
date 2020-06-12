@@ -163,39 +163,38 @@ public class MainGramCheck extends MainGramBaseVisitor<Boolean> {
    public Boolean visitAssign(MainGramParser.AssignContext ctx) {
      boolean validation =  visit(ctx.expr());
       if (validation) {
-         for (TerminalNode t : ctx.idList().ID()) {
-            String id = t.getText();
-            if (!MainGramParser.symbolTable.containsKey(id)) {
-               ErrorHandling.printError(ctx, "Variable \"" + id + "\" not defined ");
-               validation = false;
-            } else {
-               Symbol sb = MainGramParser.symbolTable.get(id);
-               if (sb.type().getClass().getName().equals("Dimension")) {
-                  if (ctx.expr().uni != null && !ctx.expr().uni.equals("noUnit")) {
-                     String unit = ctx.expr().uni;
-                     Dimension dim = (Dimension) sb.type(); // dimension is a type
-                     System.out.println(dim.getBaseUnit());
-                     if (dim.checkUnit(unit)) { // check if unit is in the list of units of Dimension
-                        ErrorHandling.printError(ctx, "The unit \"" + unit + "\" is not allowed for dimension " + dim.name());
-                        validation = false;
-                     }
-                  } else {
-                     ErrorHandling.printError(ctx, "You must indicate the unit for Type \"" + sb.type() + "\" .");
+         String id = ctx.ID().getText();
+         if (!MainGramParser.symbolTable.containsKey(id)) {
+            ErrorHandling.printError(ctx, "Variable \"" + id + "\" not defined ");
+            validation = false;
+         } else {
+            Symbol sb = MainGramParser.symbolTable.get(id);
+            if (sb.type().getClass().getName().equals("Dimension")) {
+               if (ctx.expr().uni != null && !ctx.expr().uni.equals("noUnit")) {
+                  String unit = ctx.expr().uni;
+                  Dimension dim = (Dimension) sb.type(); // dimension is a type
+                  System.out.println(dim.getBaseUnit());
+                  if (dim.checkUnit(unit)) { // check if unit is in the list of units of Dimension
+                     ErrorHandling.printError(ctx, "The unit \"" + unit + "\" is not allowed for dimension " + dim.name());
+                     validation = false;
                   }
-               }
-               if (!sb.type().conformsTo(ctx.expr().eType)) {
-                  ErrorHandling.printError(ctx, "Variable \"" + id + "\" type does not match to expression ");
-                  validation = false;
                } else {
-                  if (sb.type().getClass().getName().equals("Dimension")) {
-                     sb.setDim(ctx.expr().dim);
-                     sb.setUnit(ctx.expr().uni);
-                  }
-                  sb.setValueDefined();
-
+                  ErrorHandling.printError(ctx, "You must indicate the unit for Type \"" + sb.type() + "\" .");
                }
             }
+            if (!sb.type().conformsTo(ctx.expr().eType)) {
+               ErrorHandling.printError(ctx, "Variable \"" + id + "\" type does not match to expression ");
+               validation = false;
+            } else {
+               if (sb.type().getClass().getName().equals("Dimension")) {
+                  sb.setDim(ctx.expr().dim);
+                  sb.setUnit(ctx.expr().uni);
+               }
+               sb.setValueDefined();
+
+            }
          }
+      
       }
       return validation;
    }

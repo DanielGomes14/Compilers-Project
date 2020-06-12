@@ -29,7 +29,7 @@ importDims: 'import' ID ';'  #importDimensionFile;                              
 
 declaration: type idList;                                                          // tipo e nome da variavel a ser declarada
 assignment: declaration '=' expr  #decAssign                                                //declarar variavel e atribuir o valor
-          | idList '=' expr      #Assign                                                    //caso a variavel ja exista alterar valor
+          | ID '=' expr      #Assign                                                    //caso a variavel ja exista alterar valor
             ;
 
 

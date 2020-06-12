@@ -1,2 +1,2 @@
-integer d1 = 2;
-integer d2 = d1++;
+integer d1,d2 = 2 * 6 +2;
+boolean a2 = false;

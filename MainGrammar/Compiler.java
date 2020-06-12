@@ -47,45 +47,45 @@ public class Compiler extends MainGramBaseVisitor<ST> {
    }
 
    @Override public ST visitDeclaration(MainGramParser.DeclarationContext ctx) {
-      ST res = stg.getInstanceOf("decl");
+     ST res =stg.getInstanceOf("stats");
       for(TerminalNode t: ctx.idList().ID())
       {
          String id = t.getText();
          Symbol s = MainGramParser.symbolTable.get(id);
          s.setVarName(newVar());
-         res.add("type", s.type().getPrimType());
-         res.add("var",s.varName());
+         ST decl = stg.getInstanceOf("decl");
+         decl.add("type", s.type().getPrimType());
+         decl.add("var",s.varName());
+         res.add("stat",decl.render());
      }
-      return res;
+     return res;
    }
 
    @Override public ST visitDecAssign(MainGramParser.DecAssignContext ctx) {
-      
-      ST res = stg.getInstanceOf("decl");
+      ST res =stg.getInstanceOf("stats");
       for(TerminalNode t: ctx.declaration().idList().ID())
       {
          String id = t.getText();
          Symbol s = MainGramParser.symbolTable.get(id);
          s.setVarName(newVar());
-         res.add("stat", visit(ctx.expr()));
-         res.add("type", s.type().getPrimType());
-         res.add("var",s.varName());
-         res.add("value",ctx.expr().varName);
+         ST dec = stg.getInstanceOf("decl");
+         dec.add("type", s.type().getPrimType());
+         dec.add("var",s.varName());
+         dec.add("stat", visit(ctx.expr()).render());
+         dec.add("value",ctx.expr().varName);
+         res.add("stat",dec.render());
       }
       return res;
    }
 
    @Override public ST visitAssign(MainGramParser.AssignContext ctx) {
       ST res = stg.getInstanceOf("assign");
-      for(TerminalNode t: ctx.idList().ID())
-      {
-         String id = t.getText();
-         Symbol s = MainGramParser.symbolTable.get(id);
-         res.add("stat", visit(ctx.expr()).render());
-         res.add("var", s.varName());
-         res.add("value", ctx.expr().varName);
-        
-      }
+      String id = ctx.ID().getText();
+      Symbol s = MainGramParser.symbolTable.get(id);
+      res.add("stat", visit(ctx.expr()).render());
+      res.add("var", s.varName());
+      res.add("value", ctx.expr().varName);
+
       return res;
    }
 /*
@@ -119,9 +119,9 @@ public class Compiler extends MainGramBaseVisitor<ST> {
 
    @Override public ST visitIncrement(MainGramParser.IncrementContext ctx) {
       ST res = stg.getInstanceOf("inc");
-      String id = ctx.increment().ID().getText();
+      String id = ctx.ID().getText();
       res.add("var",MainGramParser.symbolTable.get(id).varName());
-      res.add("op",ctx.increment().incre.getText());
+      res.add("op",ctx.incre.getText());
       return res;
    }
 
@@ -259,10 +259,10 @@ public class Compiler extends MainGramBaseVisitor<ST> {
       ctx.varName = newVar();
       res.add("type", ctx.eType.getPrimType());
       res.add("var", ctx.varName);
-      res.add("e1", ctx.e1.varName);
-      res.add("e2", ctx.e2.varName);
       res.add("stat", visit(ctx.e1).render());
       res.add("stat", visit(ctx.e2).render());
+      res.add("e1", ctx.e1.varName);
+      res.add("e2", ctx.e2.varName);
       return res;
    }
 

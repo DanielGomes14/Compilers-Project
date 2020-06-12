@@ -70,9 +70,6 @@ public class <name> {
 
 
 
-
-
-
 //declare a variable and if theres a value assign it 
 decl(type, var, value,stat) ::= <<
 <stats(stat)>
