@@ -96,7 +96,8 @@ print(stat,expr) ::= <<
 System.out.println(<expr>);
 >>
 
-conditional(expr, true_stat, false_stat) ::= <<
+conditional(stat,expr, true_stat, false_stat) ::= <<
+<stats(stat)>
 if(<expr>) {
     <true_stat>
 } <if(false_stat)>
@@ -113,13 +114,14 @@ System.out.print(<prompt>);
 
 //in order to make for loops we can use the while
 
-conditionloop(statout,statebefore,stateafter,var) ::= <<
-<if(statout)> <stats(statout)> <endif>
+conditionloop(statfor,statbefore,statafter,var) ::= <<
+<if(statfor)> <stats(statfor)> <endif>
 while (true) {
-	<stats(statebefore)>
-	if (<var>) 
+	<stats(statbefore)>
+	if (<var>)
 	   break;
-	<stats(stateafter)>
+      
+	<stats(statafter)>
 } 
 >>
 
@@ -127,6 +129,7 @@ while (true) {
 binaryExpression(stat,type,var,e1,op,e2) ::= <<
 <decl(type,var,[e1," ",Operators.(op)," ",e2],stat)>
 >>
+
 
 binaryOperator(type,var,e1,op) ::= "<typeValue.(type)> <var><if(e1)> = <op>(<e1>)<endif>;"
 

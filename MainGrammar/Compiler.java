@@ -1,7 +1,6 @@
 import java.io.File;
 import java.util.Iterator;
 
-import javax.print.DocFlavor.STRING;
 
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -98,15 +97,28 @@ public class Compiler extends MainGramBaseVisitor<ST> {
    }
 
    @Override public ST visitConditional(MainGramParser.ConditionalContext ctx) {
-      return visitChildren(ctx);
-   }
-
-   @Override public ST visitElseif(MainGramParser.ElseifContext ctx) {
-      return visitChildren(ctx);
+      ST res = stg.getInstanceOf("conditional");
+      res.add("stat",visit(ctx.expr()).render());
+      res.add("expr",ctx.expr().varName);
+      res.add("true_stat",visit(ctx.trueSL).render());
+      if(ctx.falseSL != null){
+         //checking if its and else if , or just an else, in case of else if , it is generated another if else block inside the if block
+         if(ctx.falseSL.conditional() != null)  
+         res.add("false_stat", visit(ctx.falseSL).render());
+         else 
+         res.add("false_stat",visit(ctx.falseSL.statList()).render());
+      }
+      return res;
    }
 
    @Override public ST visitForCond(MainGramParser.ForCondContext ctx) {
-      return visitChildren(ctx);
+      ST res = stg.getInstanceOf("conditionloop");
+      res.add("statfor",visit(ctx.assignment()));
+      res.add("statbefore",visit(ctx.expr(0)).render());
+      res.add("var",ctx.expr(0).varName);
+      res.add("statafter",visit(ctx.trueSL).render());
+      res.add("statafter", visit(ctx.expr(1)).render());
+      return res;
    }
 
    @Override public ST visitWhileCond(MainGramParser.WhileCondContext ctx) {
@@ -164,6 +176,9 @@ public class Compiler extends MainGramBaseVisitor<ST> {
       
       return visitChildren(ctx);
    }
+
+
+   
    @Override public ST  visitAndOrExpr(MainGramParser.AndOrExprContext ctx){
       return visitChildren(ctx);
    }

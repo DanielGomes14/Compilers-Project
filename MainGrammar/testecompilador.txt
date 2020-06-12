@@ -1,2 +1,6 @@
-integer d1,d2 = 2 * 6 +2;
-boolean a2 = false;
+integer d1 = 10;
+integer b = d1;
+for ( integer i = 0; i<10; i+1)
+{
+    println("ola");
+};

@@ -28,7 +28,8 @@ print: 'println' '(' expr ')'  ;                                                
 importDims: 'import' ID ';'  #importDimensionFile;                                          // dá import a File com as Dimensions
 
 declaration: type idList;                                                          // tipo e nome da variavel a ser declarada
-assignment: declaration '=' expr  #decAssign                                                //declarar variavel e atribuir o valor
+assignment
+: declaration '=' expr  #decAssign                                                //declarar variavel e atribuir o valor
           | ID '=' expr      #Assign                                                    //caso a variavel ja exista alterar valor
             ;
 
