@@ -50,6 +50,8 @@ Operators ::= [
 ]
 
 
+
+
 incrementVar ::= [
    "++" : "++",
    "--" : "--"
@@ -62,7 +64,7 @@ module(name, stat) ::= <<
 import java.util.Scanner;
 public class <name> {
     public static void main (String[] args) {
-       Scanner sc = new Scanner (System.in);
+        Scanner sc = new Scanner (System.in);
         <stats(stat)>
     }
 }
@@ -114,14 +116,14 @@ System.out.print(<prompt>);
 
 //in order to make for loops we can use the while
 
-conditionloop(statfor,statbefore,statafter,var) ::= <<
+conditionloop(statfor,statbefore,statafter,var,inc) ::= <<
 <if(statfor)> <stats(statfor)> <endif>
 while (true) {
 	<stats(statbefore)>
-	if (<var>)
+	if (!<var>){
 	   break;
-      
-	<stats(statafter)>
+   }   
+   <stats(statafter)>
 } 
 >>
 
@@ -133,7 +135,10 @@ binaryExpression(stat,type,var,e1,op,e2) ::= <<
 
 binaryOperator(type,var,e1,op) ::= "<typeValue.(type)> <var><if(e1)> = <op>(<e1>)<endif>;"
 
+negationExpression(type,var,e,op,stat) ::= "<decl(type,var,[Operators.(op),e],stat)>"
 
+equalExpression(type,var,e1,e2,stat)  ::= "<decl(type,var,[e1,\".equals(\",e2,\")\"],stat)>"
+notEqualExpression(type,var,e1,e2,stat) ::= "<decl(type,var,[\"!\",e1,\".equals(\",e2,\")\"],stat)>"
 powerExpression(type,var,e1,e2,stat) ::= "<decl(type,var,[powerTypeCast.(type),\"Math.pow(\",e1,\",\",e2,\")\"],stat)>"
 
 literalBoolean(value) ::= "<booleanValue.(value)>"

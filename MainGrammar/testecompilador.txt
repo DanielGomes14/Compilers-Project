@@ -1,6 +1,10 @@
 integer d1 = 10;
 integer b = d1;
-for ( integer i = 0; i<10; i+1)
+real prompt = scan("enter someshit",real);
+while ( b < 20.0)
 {
-    println("ola");
+    println("boi");
+    if("ola" != "ola"){
+        println("boi");
+    };
 };

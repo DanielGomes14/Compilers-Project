@@ -7,6 +7,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 
 import org.stringtemplate.v4.*;
 
+
 public class Compiler extends MainGramBaseVisitor<ST> {
    protected int varCount = 0;
    protected String target = "java"; // default
@@ -39,10 +40,6 @@ public class Compiler extends MainGramBaseVisitor<ST> {
       //res.add("type", ctx.expr().eType.name());
       res.add("expr",ctx.expr().varName);
       return res;
-   }
-
-   @Override public ST visitImportDimensionFile(MainGramParser.ImportDimensionFileContext ctx) {
-      return visitChildren(ctx);
    }
 
    @Override public ST visitDeclaration(MainGramParser.DeclarationContext ctx) {
@@ -87,14 +84,7 @@ public class Compiler extends MainGramBaseVisitor<ST> {
 
       return res;
    }
-/*
-   @Override public ST visitIdList(MainGramParser.IdListContext ctx) {
-      return visitChildren(ctx);
-   }
-*/
-   @Override public ST visitConditionalstat(MainGramParser.ConditionalstatContext ctx) {
-      return visitChildren(ctx);
-   }
+
 
    @Override public ST visitConditional(MainGramParser.ConditionalContext ctx) {
       ST res = stg.getInstanceOf("conditional");
@@ -113,21 +103,28 @@ public class Compiler extends MainGramBaseVisitor<ST> {
 
    @Override public ST visitForCond(MainGramParser.ForCondContext ctx) {
       ST res = stg.getInstanceOf("conditionloop");
-      res.add("statfor",visit(ctx.assignment()));
+      String a ="";
+      res.add("statfor",a=visit(ctx.assignment()).render());
+      String incVar = a.split("\n")[a.split("\n").length - 1].split(" ")[1].replace(";","");
       res.add("statbefore",visit(ctx.expr(0)).render());
       res.add("var",ctx.expr(0).varName);
       res.add("statafter",visit(ctx.trueSL).render());
       res.add("statafter", visit(ctx.expr(1)).render());
+      ST assg = stg.getInstanceOf("assign");
+      assg.add("var",incVar);
+      assg.add("value",ctx.expr(1).varName);
+      res.add("statafter",assg.render());
       return res;
    }
 
    @Override public ST visitWhileCond(MainGramParser.WhileCondContext ctx) {
-      return visitChildren(ctx);
+      ST res = stg.getInstanceOf("conditionloop");
+      res.add("statbefore",visit(ctx.expr()).render());
+      res.add("var",ctx.expr().varName);
+      res.add("statafter",visit(ctx.trueSL).render());
+      return res; 
    }
 
-   @Override public ST visitInput(MainGramParser.InputContext ctx) {
-    return visitChildren(ctx);
-   }
 
    @Override public ST visitIncrement(MainGramParser.IncrementContext ctx) {
       ST res = stg.getInstanceOf("inc");
@@ -137,27 +134,6 @@ public class Compiler extends MainGramBaseVisitor<ST> {
       return res;
    }
 
-   /*
-   @Override public ST visitTypeInt(MainGramParser.TypeIntContext ctx) {
-      return visitChildren(ctx);
-   }
-
-   @Override public ST visitTypeReal(MainGramParser.TypeRealContext ctx) {
-      return visitChildren(ctx);
-   }
-
-   @Override public ST visitTypeBool(MainGramParser.TypeBoolContext ctx) {
-      return visitChildren(ctx);
-   }
-
-   @Override public ST visitTypeStr(MainGramParser.TypeStrContext ctx) {
-      return visitChildren(ctx);
-   }
-
-   @Override public ST visitDimensionType(MainGramParser.DimensionTypeContext ctx) {
-      return visitChildren(ctx);
-   }
-*/
    @Override public ST visitStrExpr(MainGramParser.StrExprContext ctx) {
       ST res = stg.getInstanceOf("decl");
       ctx.varName = newVar();
@@ -173,14 +149,33 @@ public class Compiler extends MainGramBaseVisitor<ST> {
     }
 
    @Override public ST visitEqualComparisonExpr(MainGramParser.EqualComparisonExprContext ctx) {
-      
-      return visitChildren(ctx);
+    ctx.varName = newVar();
+    ST res = stg.getInstanceOf("stats");
+    res.add("stat",visit(ctx.e1));
+    res.add("stat",visit(ctx.e2));
+    if (ctx.e1.eType.getPrimType().equals("string") && ctx.e2.eType.getPrimType().equals("string")){
+       if(ctx.op.equals("==")){
+       ST eq = equalExpression(ctx, "equalExpression", ctx.eType.getPrimType(), ctx.varName, ctx.e1.varName, ctx.e2.varName);
+       res.add("stat",eq.render());
+       return res;
+
+      }
+      else {
+       ST eq = equalExpression(ctx, "notEqualExpression", ctx.eType.getPrimType(), ctx.varName, ctx.e1.varName, ctx.e2.varName);
+       res.add("stat",eq.render());
+       return res;
+      }
+    }
+    else
+   return binaryExpression(ctx, visit(ctx.e1).render(), visit(ctx.e2).render(), ctx.eType.name(), ctx.varName, ctx.e1.varName, ctx.op.getText(), ctx.e2.varName);
+   
    }
 
 
    
    @Override public ST  visitAndOrExpr(MainGramParser.AndOrExprContext ctx){
-      return visitChildren(ctx);
+      ctx.varName = newVar();
+      return binaryExpression(ctx, visit(ctx.e1).render(), visit(ctx.e2).render(), ctx.eType.name(), ctx.varName, ctx.e1.varName, ctx.op.getText(), ctx.e2.varName);
    }
    @Override public ST visitIntegerExpr(MainGramParser.IntegerExprContext ctx) {
       ST res = stg.getInstanceOf("decl");
@@ -243,24 +238,27 @@ public class Compiler extends MainGramBaseVisitor<ST> {
 
 
    @Override public ST visitNotExpr(MainGramParser.NotExprContext ctx) {
-      ST res = stg.getInstanceOf("binaryOperator");
+      ST res = stg.getInstanceOf("negationExpression");
       ctx.varName = newVar();
+      res.add("stat",visit(ctx.e).render());
       res.add("type", ctx.eType.getPrimType());
       res.add("var", ctx.varName);
-      visit(ctx.expr());
-      res.add("e1", ctx.expr().varName);
-      res.add("op", "!");
+      res.add("op","!");
+      res.add("e",ctx.expr().varName);
       return res;
    }
 
    @Override public ST visitSignExpr(MainGramParser.SignExprContext ctx) {
-      ST res = stg.getInstanceOf("binaryOperator");
+      ST res = stg.getInstanceOf("stats");
+      res.add("stat",visit(ctx.e).render());
+
+      ST bn = stg.getInstanceOf("binaryOperator");
       ctx.varName = newVar();
-      res.add("type", ctx.eType.getPrimType());
-      res.add("var", ctx.varName);
-      visit(ctx.expr());
-      res.add("e1", ctx.expr().varName);
-      res.add("op", ctx.sign.getText());
+      bn.add("type", ctx.eType.getPrimType());
+      bn.add("var", ctx.varName);
+      bn.add("e1", ctx.expr().varName);
+      bn.add("op", ctx.sign.getText());
+      res.add("stat",bn.render());
       return res;
    }
 
@@ -310,6 +308,15 @@ public class Compiler extends MainGramBaseVisitor<ST> {
       return res;
    }
 
+
+   protected ST equalExpression(ParserRuleContext ctx,String instance,String type, String var, String e1Var,String e2Var) {
+      ST res = stg.getInstanceOf(instance);
+      res.add("type", type);
+      res.add("var", var);
+      res.add("e1", e1Var);
+      res.add("e2", e2Var);
+      return res;
+   }
    public boolean validTarget(String target) {
       File f = new File(target+".stg");
 

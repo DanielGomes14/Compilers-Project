@@ -418,7 +418,7 @@ public class MainGramCheck extends MainGramBaseVisitor<Boolean> {
          }
          else{
           
-               if(!ctx.e1.eType.conformsTo(ctx.e2.eType)){
+               if(!ctx.e1.eType.conformsTo(ctx.e2.eType) & !ctx.e2.eType.conformsTo(ctx.e1.eType)){
                   ErrorHandling.printError(ctx, "Cannot compare \"" + ctx.e1.eType +  "\" with type "  + ctx.e2.eType);
                   validation=false;
                               }
