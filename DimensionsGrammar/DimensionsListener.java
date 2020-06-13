@@ -95,17 +95,49 @@ public interface DimensionsListener extends ParseTreeListener {
 	 */
 	void exitTypeConversions(DimensionsParser.TypeConversionsContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code ConvCheck}
-	 * labeled alternative in {@link DimensionsParser#conversion}.
+	 * Enter a parse tree produced by {@link DimensionsParser#conversion}.
 	 * @param ctx the parse tree
 	 */
-	void enterConvCheck(DimensionsParser.ConvCheckContext ctx);
+	void enterConversion(DimensionsParser.ConversionContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code ConvCheck}
-	 * labeled alternative in {@link DimensionsParser#conversion}.
+	 * Exit a parse tree produced by {@link DimensionsParser#conversion}.
 	 * @param ctx the parse tree
 	 */
-	void exitConvCheck(DimensionsParser.ConvCheckContext ctx);
+	void exitConversion(DimensionsParser.ConversionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link DimensionsParser#polynomial}.
+	 * @param ctx the parse tree
+	 */
+	void enterPolynomial(DimensionsParser.PolynomialContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DimensionsParser#polynomial}.
+	 * @param ctx the parse tree
+	 */
+	void exitPolynomial(DimensionsParser.PolynomialContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code realMonomial}
+	 * labeled alternative in {@link DimensionsParser#monomial}.
+	 * @param ctx the parse tree
+	 */
+	void enterRealMonomial(DimensionsParser.RealMonomialContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code realMonomial}
+	 * labeled alternative in {@link DimensionsParser#monomial}.
+	 * @param ctx the parse tree
+	 */
+	void exitRealMonomial(DimensionsParser.RealMonomialContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code const}
+	 * labeled alternative in {@link DimensionsParser#monomial}.
+	 * @param ctx the parse tree
+	 */
+	void enterConst(DimensionsParser.ConstContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code const}
+	 * labeled alternative in {@link DimensionsParser#monomial}.
+	 * @param ctx the parse tree
+	 */
+	void exitConst(DimensionsParser.ConstContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code DTypeCheck}
 	 * labeled alternative in {@link DimensionsParser#datatype}.

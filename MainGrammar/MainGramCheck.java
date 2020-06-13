@@ -36,7 +36,6 @@ public class MainGramCheck extends MainGramBaseVisitor<Boolean> {
       Boolean validation=true;
     
       if(ctx.importDims(0)!=null){
-         System.out.println("pads");
          validation=visit(ctx.importDims(0));
       }
       if(validation){
@@ -69,7 +68,6 @@ public class MainGramCheck extends MainGramBaseVisitor<Boolean> {
    
    @Override
    public Boolean visitPrint(MainGramParser.PrintContext ctx) {
-      System.out.println("çmsfdsd");
       boolean validation=visit(ctx.expr());
       return validation;
    }
@@ -222,9 +220,7 @@ public class MainGramCheck extends MainGramBaseVisitor<Boolean> {
 
    @Override
    public Boolean visitConditional(MainGramParser.ConditionalContext ctx) {
-      System.out.println("ola");
       boolean validation =  visit(ctx.expr());
-      System.out.println("ole");
 
       if (validation) {
          if (ctx.expr().eType.conformsTo(booleanType)) {

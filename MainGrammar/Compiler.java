@@ -103,7 +103,7 @@ public class Compiler extends MainGramBaseVisitor<ST> {
 
    @Override public ST visitForCond(MainGramParser.ForCondContext ctx) {
       ST res = stg.getInstanceOf("conditionloop");
-      String a ="";
+      String a = "";
       res.add("statfor",a=visit(ctx.assignment()).render());
       String incVar = a.split("\n")[a.split("\n").length - 1].split(" ")[1].replace(";","");
       res.add("statbefore",visit(ctx.expr(0)).render());

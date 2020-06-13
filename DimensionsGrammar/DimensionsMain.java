@@ -1,6 +1,8 @@
 import java.io.IOException;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
+
+
 import java.util.Map;
 public class DimensionsMain {
    public static void main(String[] args) {
@@ -19,13 +21,9 @@ public class DimensionsMain {
          // begin parsing at program rule:
          ParseTree tree = parser.program();
          if (parser.getNumberOfSyntaxErrors() == 0) {
-            // print LISP-style tree:
-            // System.out.println(tree.toStringTree(parser));
+
             DimCheck visitor0 = new DimCheck();
             visitor0.visit(tree);
-            for (Map.Entry<String, Dimension> entry : parser.dimTable.entrySet()) {
-               System.out.println(entry.getKey() + ":" + entry.getValue().toString());
-           }
          }
       }
       catch(IOException e) {

@@ -103,13 +103,49 @@ public class DimensionsBaseListener implements DimensionsListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterConvCheck(DimensionsParser.ConvCheckContext ctx) { }
+	@Override public void enterConversion(DimensionsParser.ConversionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitConvCheck(DimensionsParser.ConvCheckContext ctx) { }
+	@Override public void exitConversion(DimensionsParser.ConversionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterPolynomial(DimensionsParser.PolynomialContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitPolynomial(DimensionsParser.PolynomialContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterRealMonomial(DimensionsParser.RealMonomialContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitRealMonomial(DimensionsParser.RealMonomialContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterConst(DimensionsParser.ConstContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitConst(DimensionsParser.ConstContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

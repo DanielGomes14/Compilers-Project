@@ -20,14 +20,18 @@ type: datatype unit                             #TypeNormal         //declaratio
 ;
 
 
-conversion: ID '=' number op=('*' | '/' ) ID      #ConvCheck ;        //qual nome da unidade de conversao e respetiva escala em relaçao a ordem de grandeza definida anteriormente
+conversion: ID '=' polynomial;
+
+polynomial : ( sg=SIGN? monomial) (SIGN monomial)*;
+monomial : number '*'  ID                        #realMonomial
+         | number                                #const;
 
 datatype: dt=('real' | 'integer')                #DTypeCheck ;       //tipos de dados primitivos
 
 unit: '(' ID (op=('*'|'/') ID)*  ')'            #unitCheck ;        //unidades (ex: m, cm, s, m/s, etc)
 
 number: INTEGER | REAL;
-
+SIGN: '+'| '-' ;
 REAL: [0-9]+ '.' [0-9]*;                        
 INTEGER: [0-9]+;                                               //Obrigar que o nome da dimensao seja comecado por maiuscula e ser mais que uma letra
 ID: LETTER ( LETTER | INTEGER )*;

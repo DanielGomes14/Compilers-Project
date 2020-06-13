@@ -1,5 +1,8 @@
 import java.util.ArrayList;
 import java.text.ParseException;
+import java.util.Iterator;
+
+import org.xml.sax.ErrorHandler;
 public class DimCheck extends DimensionsBaseVisitor<Object> {
 
    @Override public Object visitDeclar(DimensionsParser.DeclarContext ctx) {
@@ -32,9 +35,10 @@ public class DimCheck extends DimensionsBaseVisitor<Object> {
                String[] subtype ;
                char op;
                if(type.contains("/")) {
-                  subtype = type.split("\\/");
+                  subtype = type.split("/");
                   op = '/';
                } else {
+
                   subtype = type.split("\\*");
                   op = '*';
                }
@@ -73,46 +77,25 @@ public class DimCheck extends DimensionsBaseVisitor<Object> {
       String conv = (String) visit(ctx.type());
       String[] sepequal = conv.split("=");//0-nome da unidade
       String[] sepoper;//0-valor 1-base
+  
       if(ctx.type().getChildCount()!=1){
-         ErrorHandling.printError(ctx, "Impossivel fazer essa conversao!");
+         ErrorHandling.printError(ctx, "Cannot make this conversion!");
          validation=false;
       }
-      if(sepequal[1].contains("/")) {
-         sepoper = sepequal[1].split("\\/");
-         op = '/';
-      } else {
-         sepoper = sepequal[1].split("\\*");
-         op = '*';
-      }
-      if(DimensionsParser.dimTable.get(dmname).checkUnit(sepequal[0])){
-         if(!DimensionsParser.dimTable.get(dmname).checkUnit(sepoper[1])){
-            String unitName="";
-            Double ratio=0.0;
-            if(op=='*'){
-                     ratio = Double.parseDouble(sepoper[0]);
-                     if(DimensionsParser.dimTable.containsKey(dmname)){
-                        unitName=DimensionsParser.dimTable.get(dmname).getBaseUnit();
-                     }
-            }
-            else if(op=='/'){
-                     if(DimensionsParser.dimTable.containsKey(dmname)){
-                        unitName=DimensionsParser.dimTable.get(dmname).getBaseUnit();
-                     }
-                     ratio = 1/Double.parseDouble(sepoper[0]);
-            }
-            else{
-               ErrorHandling.printError(ctx, "Dimension not defined!");
-               validation=false;
-            }
-         }
-         else{
-            ErrorHandling.printError(ctx, "Cannot add unit: Unit \"" + sepoper[1] + "\" not defined for Dimension " + dmname);
-            validation=false;
-         }
+      String polynomial = sepequal[1];
+      String [] splitpoly = polynomial.split("\\|");  
+      String unit =sepequal[0];
+      Dimension d =DimensionsParser.dimTable.get(dmname);
+      if (d==null){
+         ErrorHandling.printError(ctx, "Dimension \"" + dmname + "\" not defined! "  );
+         validation=false;
       }
       else{
-         ErrorHandling.printError(ctx, "Cannot add unit: Unit \"" + sepequal[0] + "\" already exists in Dimension " + dmname);
-         validation=false;
+        validation=d.checkFormula(ctx,splitpoly);
+        if(validation){
+           d.addConversion(unit, polynomial);
+            System.out.println(d.calcConversion(unit, 1));
+        }
       }
       return validation;
    }
@@ -155,18 +138,62 @@ public class DimCheck extends DimensionsBaseVisitor<Object> {
    }
 
    @Override public Object visitTypeConversions(DimensionsParser.TypeConversionsContext ctx) {
-      boolean validation=true;
-      String conversion = (String) visit(ctx.conversion());
-       if (conversion != null){
-          return conversion;
-       }
-       else{
-         ErrorHandling.printError(ctx, "Conversao invalida");
-         return null;
-       }
+      return (String) visit(ctx.conversion());
+   }
+   @Override public Object visitConversion(DimensionsParser.ConversionContext ctx){
+      String ID = ctx.ID().getText();
+      String polynomial = (String) visit(ctx.polynomial());
+      return ID + "=" + polynomial;
    }
 
 
+   @Override public Object visitPolynomial(DimensionsParser.PolynomialContext ctx){
+      String polynomial = "";
+      if(ctx.sg != null){
+         polynomial += ctx.SIGN(0).getText();
+      }
+      polynomial += (String) visit(ctx.monomial(0))+ "|";
+      int counter=0;
+  
+      if (ctx.monomial().size() > 1 ){
+         Iterator <DimensionsParser.MonomialContext> it  = ctx.monomial().iterator();
+         while (it.hasNext()){
+            if (counter==0){
+               counter++;
+               continue;
+            }
+            if(counter==ctx.monomial().size() - 1){
+               polynomial+= ctx.SIGN(0).getText();
+               polynomial+= (String) (visit(ctx.monomial(counter)));
+               break;
+            }
+            else{
+               polynomial+= ctx.SIGN(counter);
+               polynomial+= (String) visit(ctx.monomial(counter)) + "|";
+            }
+            counter++;
+         }
+      }
+      return polynomial;
+   }      
+
+   @Override public Object visitRealMonomial(DimensionsParser.RealMonomialContext ctx){
+      String num1 = ctx.number().getText();
+      String nome = ctx.ID().getText();
+      return num1+"*"+nome;
+      
+   }
+   
+   @Override public Object visitConst(DimensionsParser.ConstContext ctx){
+      String num = ctx.number().getText();
+
+      return  num;
+   }
+
+   /*
+   @Override public Object visitConvCheck(DimensionsParser.ConvCheckContext ctx) {
+      boolean validation = true;
+      String d = ctx.number().getText();     
    @Override public Object visitConvCheck(DimensionsParser.ConvCheckContext ctx) {
       boolean validation = true;
       String d = ctx.number().getText();     
@@ -180,6 +207,7 @@ public class DimCheck extends DimensionsBaseVisitor<Object> {
 
       return validation;
    }
+   */
    @Override public Object visitDTypeCheck(DimensionsParser.DTypeCheckContext ctx) {
       String datatype = (String)ctx.dt.getText();
       boolean validation = true;
