@@ -56,10 +56,8 @@ public class DimCheck extends DimensionsBaseVisitor<Object> {
                validation =false;
             }
             
-         } else {
-            ErrorHandling.printError(ctx, "Not allowed to make conversions!");
-            validation =false;
-         }
+         } 
+
       } else {
          ErrorHandling.printError(ctx, "Dimension name has to start with Upper Case");
       }
@@ -70,7 +68,6 @@ public class DimCheck extends DimensionsBaseVisitor<Object> {
 
    @Override public Object visitAddUn(DimensionsParser.AddUnContext ctx) {//conversion 
       boolean validation=true;
-      boolean flag=true;
       char op;
       String dmname = ctx.ID().getText();
       String conv = (String) visit(ctx.type());
@@ -87,40 +84,40 @@ public class DimCheck extends DimensionsBaseVisitor<Object> {
          sepoper = sepequal[1].split("\\*");
          op = '*';
       }
-      String unitName="";
-      Double ratio=0.0;
-      if(op=='*'){
-               ratio = Double.parseDouble(sepoper[0]);
-               if(DimensionsParser.dimTable.containsKey(dmname)){
-                  unitName=DimensionsParser.dimTable.get(dmname).getBaseUnit();
-               }
-      }
-      else if(op=='/'){
-               if(DimensionsParser.dimTable.containsKey(dmname)){
-                  unitName=DimensionsParser.dimTable.get(dmname).getBaseUnit();
-               }
-               ratio = 1/Double.parseDouble(sepoper[0]);
+      if(DimensionsParser.dimTable.get(dmname).checkUnit(sepequal[0])){
+         if(!DimensionsParser.dimTable.get(dmname).checkUnit(sepoper[1])){
+            String unitName="";
+            Double ratio=0.0;
+            if(op=='*'){
+                     ratio = Double.parseDouble(sepoper[0]);
+                     if(DimensionsParser.dimTable.containsKey(dmname)){
+                        unitName=DimensionsParser.dimTable.get(dmname).getBaseUnit();
+                     }
+            }
+            else if(op=='/'){
+                     if(DimensionsParser.dimTable.containsKey(dmname)){
+                        unitName=DimensionsParser.dimTable.get(dmname).getBaseUnit();
+                     }
+                     ratio = 1/Double.parseDouble(sepoper[0]);
+            }
+            else{
+               ErrorHandling.printError(ctx, "Dimension not defined!");
+               validation=false;
+            }
+         }
+         else{
+            ErrorHandling.printError(ctx, "Cannot add unit: Unit \"" + sepoper[1] + "\" not defined for Dimension " + dmname);
+            validation=false;
+         }
       }
       else{
-         ErrorHandling.printError(ctx, "Dimension not defined!");
-         validation=false;
-      }
-      
-      for(String dname : DimensionsParser.dimTable.keySet()){
-            if(dname.equals(dmname)){
-               //System.out.println( unitName + "-->"+ sepequal[0]);
-               if(!DimensionsParser.dimTable.get(dname).checkConversion(unitName,sepequal[0],ratio)) {
-                  ErrorHandling.printError(ctx, "Unidade já existente!");
-               }
-               flag=false;
-            }
-      }
-      if(flag){
-         ErrorHandling.printError(ctx, "Cannot add unit to not defined Dimension");
+         ErrorHandling.printError(ctx, "Cannot add unit: Unit \"" + sepequal[0] + "\" already exists in Dimension " + dmname);
          validation=false;
       }
       return validation;
    }
+
+
    @Override public Object visitTypeNormal(DimensionsParser.TypeNormalContext ctx) {
       String datatype = (String) visit(ctx.datatype());
       String unit = (String) visit(ctx.unit());
@@ -144,7 +141,7 @@ public class DimCheck extends DimensionsBaseVisitor<Object> {
       boolean validation = true;
       if (dimensionName1.toLowerCase().equals(dimensionName1) && dimensionName2.toLowerCase().equals(dimensionName2)) {
          ErrorHandling.printError(ctx, "Dimension name has to start with Upper Case");
-         validation =false;
+         return null;
 
       } else {
          if(DimensionsParser.dimTable.containsKey(dimensionName1) && DimensionsParser.dimTable.containsKey(dimensionName2)) {
@@ -155,7 +152,6 @@ public class DimCheck extends DimensionsBaseVisitor<Object> {
             return null;
          }
       }
-      return validation;
    }
 
    @Override public Object visitTypeConversions(DimensionsParser.TypeConversionsContext ctx) {
@@ -173,7 +169,7 @@ public class DimCheck extends DimensionsBaseVisitor<Object> {
 
    @Override public Object visitConvCheck(DimensionsParser.ConvCheckContext ctx) {
       boolean validation = true;
-      String d = ctx.number().getText();      
+      String d = ctx.number().getText();     
       if( d != null) {
          String s = ctx.ID(0).getText() + "=" + ctx.number().getText() + ctx.op.getText() + ctx.ID(1).getText();
          return s;

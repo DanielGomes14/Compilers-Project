@@ -1,5 +1,5 @@
 Massa -> real (kg);
 Volume -> real (l);
-Densidade -> Massa/Ola;
+Densidade -> Massa/Volume;
 Massa -> addUnit g = 1000*kg;
 Capacidade -> Densidade*Massa;

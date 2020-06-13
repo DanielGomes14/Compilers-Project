@@ -20,7 +20,7 @@ type: datatype unit                             #TypeNormal         //declaratio
 ;
 
 
-conversion:ID '=' number op=('*' | '/' ) ID      #ConvCheck ;        //qual nome da unidade de conversao e respetiva escala em relaçao a ordem de grandeza definida anteriormente
+conversion: ID '=' number op=('*' | '/' ) ID      #ConvCheck ;        //qual nome da unidade de conversao e respetiva escala em relaçao a ordem de grandeza definida anteriormente
 
 datatype: dt=('real' | 'integer')                #DTypeCheck ;       //tipos de dados primitivos
 
