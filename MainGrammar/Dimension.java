@@ -24,13 +24,14 @@ public class Dimension extends Type{
 		 this.conversions.put(unit,"-1.0"); //quick way to find out the first unit added, so that we can convert every unit to the first created
 	}
 	
+	//check if Dimension is numeric
 	@Override
 	public boolean isNumeric(){
 		return (this.primtype.equals("integer") || this.primtype.equals("real"));
 	}
 
 
-//add conversion
+	//add conversion
 	public boolean addConversion(String unit, String formula){
 		if(conversions.get(unit) !=null &&  conversions.get(unit).equals("-1.0")){ //comparam nova unidade em relaçao a unidade base
 			if(checkUnit(unit)){
@@ -77,6 +78,10 @@ public boolean checkFormula(ParserRuleContext ctx,String [] polynomial){
 			
 		}
 	 }
+	if (unitcounter == 0 ){
+		ErrorHandling.printError(ctx, " Cannot add a unit without specifying a unit of this Dimension to compare with"  );
+		val=false;
+	} 
 	return val;
 }
 
@@ -115,6 +120,7 @@ public boolean checkFormula(ParserRuleContext ctx,String [] polynomial){
 		 return valuetoconvert;
 	} 
 
+	// check if a unit is defined for this Dimension
 	public boolean checkUnit(String unit){
 		for(int i = 0; i< units.size();i++){
 			if(units.get(i).equals(unit)) return false;

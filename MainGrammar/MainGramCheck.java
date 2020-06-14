@@ -9,12 +9,16 @@ import org.antlr.v4.runtime.tree.*;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 
+/*
+   Main visitor
+*/
+
 public class MainGramCheck extends MainGramBaseVisitor<Boolean> {
    private final RealType realType = new RealType();
    private final IntegerType integerType = new IntegerType();
    private final BooleanType booleanType = new BooleanType();
    private final StringType stringType = new StringType();
-
+   private  boolean isinput=false;
    private Type fecthType(Type t1,Type t2,String op){
       Type r = null;
       if(t1.isNumeric() && t2.isNumeric()){
@@ -31,16 +35,19 @@ public class MainGramCheck extends MainGramBaseVisitor<Boolean> {
        return r;
    }
 
+   //
    @Override
    public Boolean visitMain(MainGramParser.MainContext ctx) {
       Boolean validation=true;
-    
-      if(ctx.importDims(0)!=null){
-         validation=visit(ctx.importDims(0));
+      
+      if(ctx.importDims()!=null){
+         Iterator<MainGramParser.ImportDimsContext> it = ctx.importDims().iterator();       
+         while(it.hasNext()){
+            validation = visit(it.next());
+         }
       }
       if(validation){
          if(ctx.statList().stat() !=null){
-            System.out.println(ctx.statList().getText());
             validation= visit(ctx.statList());
          }
           
@@ -75,7 +82,6 @@ public class MainGramCheck extends MainGramBaseVisitor<Boolean> {
    @Override
    public Boolean visitImportDimensionFile(MainGramParser.ImportDimensionFileContext ctx) {
       Boolean validation = true;
-      
       String fileName = ctx.ID().getText() + ".txt";
       InputStream in_stream = null;
       CharStream input = null;
@@ -113,6 +119,7 @@ public class MainGramCheck extends MainGramBaseVisitor<Boolean> {
                ErrorHandling.printError(ctx, "Variable \"" + id + "\" already defined ");
                validation = false;
             } else {
+               
                validation = visit(ctx.declaration().type());
                if (validation){
                Type tp = ctx.declaration().type().res; 
@@ -132,7 +139,7 @@ public class MainGramCheck extends MainGramBaseVisitor<Boolean> {
                         }
                      }
                   } 
-                  else {
+                  else if (!isinput) {
                      ErrorHandling.printError(ctx, "You must indicate the unit for Type \"" + tp + "\" .");
                   }
                }
@@ -151,9 +158,11 @@ public class MainGramCheck extends MainGramBaseVisitor<Boolean> {
                }
             }
             }
+            isinput=false;
          }
 
       }
+     
       return validation;
    }
 
@@ -173,7 +182,6 @@ public class MainGramCheck extends MainGramBaseVisitor<Boolean> {
                if (ctx.expr().uni != null && !ctx.expr().uni.equals("noUnit")) {
                   String unit = ctx.expr().uni;
                   Dimension dim = (Dimension) sb.type(); // dimension is a type
-                  System.out.println(dim.getBaseUnit());
                   if (dim.checkUnit(unit)) { // check if unit is in the list of units of Dimension
                      ErrorHandling.printError(ctx, "The unit \"" + unit + "\" is not allowed for dimension " + dim.name());
                      validation = false;
@@ -454,10 +462,8 @@ public class MainGramCheck extends MainGramBaseVisitor<Boolean> {
          validation =  visit(ctx.unit());
          if (validation) {
             String uni = ctx.unit().getText().replace("(", "").replace(")", "");
-            System.out.println("--->"+ uni);
             for(Dimension dd : DimensionsParser.dimTable.values()){
                if(!dd.checkUnit(uni)){
-                  System.out.println(";" +uni);
                   ctx.uni=uni;
                   ctx.dim=dd.name();
                   flag=true;
@@ -487,6 +493,7 @@ public class MainGramCheck extends MainGramBaseVisitor<Boolean> {
       boolean validation=true;
       if (ctx.unit() != null) {
          validation =  visit(ctx.unit());
+
          if (validation) {
             ctx.uni = ctx.unit().getText().replace("(", "").replace(")", "");
             for(Dimension dd : DimensionsParser.dimTable.values()){
@@ -522,7 +529,9 @@ public class MainGramCheck extends MainGramBaseVisitor<Boolean> {
 
    @Override
    public Boolean visitInputExpr(MainGramParser.InputExprContext ctx) {
+     isinput=true;
      boolean validation= visit(ctx.input().type());
+
       if(validation){
          ctx.eType=ctx.input().type().res;
          
@@ -544,8 +553,6 @@ public class MainGramCheck extends MainGramBaseVisitor<Boolean> {
    @Override
    public Boolean visitGreatLowComparisonExpr(MainGramParser.GreatLowComparisonExprContext ctx) {
       Boolean validation =  visit(ctx.e1) &&  visit(ctx.e2);
-      System.out.println(ctx.e1.getText() + ":"+ ctx.e1.uni);
-      System.out.println(ctx.e2.getText() + ":"+ ctx.e2.uni);
       if (validation) {
          if (!(ctx.e1.eType.isNumeric() || ctx.e2.eType.isNumeric())) {
             ErrorHandling.printError(ctx, "Cannot Use operator\"" + ctx.op + "\"for Non Numeric Types of Expressions");
@@ -602,7 +609,6 @@ public class MainGramCheck extends MainGramBaseVisitor<Boolean> {
          
          ctx.eType=integerType;
          Symbol sb = MainGramParser.symbolTable.get(ctx.increment().ID().getText());
-         System.out.println("-------"+sb.dimensionName);
          ctx.dim=sb.dimensionName;
          ctx.uni=sb.unitName;
       }
@@ -614,42 +620,62 @@ public class MainGramCheck extends MainGramBaseVisitor<Boolean> {
       boolean flag=false;
       if(validation){
          if(!ctx.e1.eType.isNumeric() || !ctx.e2.eType.isNumeric()){
-            ErrorHandling.printError(ctx, "Cannot apply operator \"" + ctx.op.getText() + "\" for non Numeric expressions!" );
-            validation=false;
+         ErrorHandling.printError(ctx, "Cannot apply operator \"" + ctx.op.getText() + "\" for non Numeric expressions!" );
+         validation=false;
          }
-         else{
-            if (ctx.e1.uni.equals("noUnit") && ctx.e2.uni.equals("noUnit")){
-               ctx.uni="noUnit";
-               ctx.dim="noDim";
+         if(ctx.op.getText().equals("%")){
+            if(!ctx.e1.dim.equals(ctx.e2.dim) & !ctx.e2.uni.equals("noUnit")){
+               ErrorHandling.printError(ctx, "Cannot apply operator \"" + ctx.op.getText() + "\" for these operands" );
+               validation=false;
+               return validation;
             }
-            else if(!ctx.e1.uni.equals("noUnit") && ctx.e2.uni.equals("noUnit")){
-               ctx.uni=ctx.e1.uni;
+            else{
+               Dimension d = DimensionsParser.dimTable.get(ctx.e1.dim);
                ctx.dim=ctx.e1.dim;
+               if(d!=null) ctx.uni=d.getBaseUnit();
+               else ctx.uni="noUnit";
+               ctx.eType=fecthType(ctx.e1.eType,ctx.e2.eType, ctx.op.getText());
             }
-            else if (ctx.e1.uni.equals("noUnit") && !ctx.e2.uni.equals("noUnit")){
-               ctx.uni=ctx.e2.uni;
-               ctx.dim=ctx.e2.dim;
-            }
-            else if(!ctx.e1.uni.equals("noUnit") && !ctx.e2.uni.equals("noUnit")){
-               String op = ctx.op.getText();
-               ctx.uni=(ctx.e1.uni + ctx.op.getText() + ctx.e2.uni);
-            }
-            for (Dimension  d : DimensionsParser.dimTable.values()) {
-               if(!d.checkUnit(ctx.uni)){
-                  ctx.dim=d.name();
-                  flag=true;
-               }
-           }
-           if(!flag) ctx.dim="noDim";
-           /*
-           if(ctx.e1.eType.conformsTo(realType) || ctx.e2.eType.conformsTo(realType)){
-              ctx.eType=realType;
-           }
-           else ctx.eType=integerType;
-           */
-          ctx.eType=fecthType(ctx.e1.eType,ctx.e2.eType, ctx.op.getText());
+
          }
-      }
+         else { 
+            if (validation){
+               if (ctx.e1.uni.equals("noUnit") && ctx.e2.uni.equals("noUnit")){
+                  ctx.uni="noUnit";
+                  ctx.dim="noDim";
+               }
+               else if(!ctx.e1.uni.equals("noUnit") && ctx.e2.uni.equals("noUnit")){
+                  ctx.uni=ctx.e1.uni;
+                  ctx.dim=ctx.e1.dim;
+               }
+               else if (ctx.e1.uni.equals("noUnit") && !ctx.e2.uni.equals("noUnit")){
+                  ctx.uni=ctx.e2.uni;
+                  ctx.dim=ctx.e2.dim;
+               }
+               else if(!ctx.e1.uni.equals("noUnit") && !ctx.e2.uni.equals("noUnit")){
+                 
+                  if(ctx.e1.dim.equals(ctx.e2.dim)){
+                     for (Dimension  d : DimensionsParser.dimTable.values()) {
+                        if(d.name().equals(ctx.e1.dim)){
+                           ctx.dim=d.name();
+                           ctx.uni=d.getBaseUnit();
+                        }
+                     }   
+                  }
+                  else ctx.uni=(ctx.e1.uni + ctx.op.getText() + ctx.e2.uni);
+               }
+               for (Dimension  d : DimensionsParser.dimTable.values()) {
+                  if(!d.checkUnit(ctx.uni)){
+                     ctx.dim=d.name();
+                     flag=true;
+                  }
+               }
+               if(!flag) ctx.dim="noDim";
+               ctx.eType=fecthType(ctx.e1.eType,ctx.e2.eType, ctx.op.getText());
+            }
+         }
+            
+      } 
       return validation;
    }
 

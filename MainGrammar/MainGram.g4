@@ -65,7 +65,7 @@ expr returns[Type eType, String varName, String dim, String uni]:               
      <assoc=right> e1=expr '^' e2=expr              #powExpr
     | sign=('+'|'-') e=expr                         #signExpr
     | '!' e=expr                                    #notExpr 
-    | e1=expr op=('*'| '/' ) e2=expr                #multDivExpr
+    | e1=expr op=('*'| '/'| '%' ) e2=expr                #multDivExpr
     | e1=expr op=('+' | '-') e2=expr                #addSubExpr
     | e1=expr op=('==' | '!=') e2=expr              #equalComparisonExpr
     | e1=expr op=('>=' | '<=' | '>' | '<') e2=expr  #greatLowComparisonExpr

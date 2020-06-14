@@ -209,7 +209,6 @@ public class Compiler extends MainGramBaseVisitor<ST> {
             if (!d.checkUnit(unit)){
               
               temp=d.calcConversion(unit,temp);
-              System.out.println(temp);
             }
          }
       }

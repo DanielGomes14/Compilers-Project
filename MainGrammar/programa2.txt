@@ -3,13 +3,18 @@ até que a densidade seja igual ou superior a 1.
 */
 
 import dimensoes2 ; // abrir ficheiro que contem dimensões
-
-
+import dimensoes1;
+Time t = 0 (s);
+println(t%2(s));
+Massa m4 = scan("Escreve uam merda" , Massa);
 Volume v = 2.0 (l); 
-Massa m =  100.0 (g);
-(m).dimensionInfo;
-Densidade d ;
-integer counter = 0;
-Massa m2 = 10.0 (kg);
-Massa m3 = m + m2;
-println("Numero de ciclos:" +  counter);
+Temperature t2;
+t2 = 23.0(F);
+for(Time i=0(s); i<10(s);i+1(s) ){
+    t=t+1(s);
+};
+println(t);
+Massa m =  100.0 (g) ;
+Massa m2 = 1.0 (kg);
+Massa m3 = m*2.0(g);
+(m3).dimensionInfo;

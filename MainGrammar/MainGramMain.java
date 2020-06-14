@@ -1,4 +1,5 @@
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 
@@ -7,12 +8,19 @@ import org.antlr.v4.runtime.tree.*;
 import org.stringtemplate.v4.*;
 
 
-
-
 public class MainGramMain {
    public static void main(String[] args) throws Exception {
+      CharStream input =null;
+      try{
+         //read file
+         input = CharStreams.fromStream(new FileInputStream(args[0]));
+      }
+      catch(Exception e){
+         ErrorHandling.printError("Couldn't find this file!");
+         System.exit(1);
+      }
       // create a CharStream that reads from standard input:
-      CharStream input = CharStreams.fromStream(System.in);
+      //CharStream input = CharStreams.fromStream(System.in);
       // create a lexer that feeds off of input CharStream:
       MainGramLexer lexer = new MainGramLexer(input);
       // create a buffer of tokens pulled from the lexer:
@@ -25,19 +33,16 @@ public class MainGramMain {
       // begin parsing at main rule:
       ParseTree tree = parser.main();
       if (parser.getNumberOfSyntaxErrors() == 0) {
-         // print LISP-style tree:
-         // System.out.println(tree.toStringTree(parser));
+
          MainGramCheck visitor0 = new MainGramCheck();
          visitor0.visit(tree);
          if(!ErrorHandling.error()){
          Compiler compiler = new Compiler();
          String outputLang = "java";
-
             if (!compiler.validTarget(outputLang)) {
                ErrorHandling.printError("Can't find template group file for " + outputLang);
                System.exit(1);
             }
-
             compiler.setTarget(outputLang);
             ST code = compiler.visit(tree);
 
@@ -54,7 +59,7 @@ public class MainGramMain {
                pw.close();
 
             } catch (FileNotFoundException e) {
-               System.err.println("Failed to write code file");
+               System.err.println("Could not write code to the file");
                System.exit(1);
             }
       }
