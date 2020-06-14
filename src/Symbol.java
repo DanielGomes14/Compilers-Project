@@ -1,4 +1,4 @@
-
+//this class represents a variable
 public  class Symbol {
    protected final String name;
    protected final Type type;

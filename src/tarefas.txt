@@ -1,2 +1,0 @@
--> corrigir unit/unit ficar 1, ou seja adimensional
--> ver melhor conformsto do String type no add/sub do maingramcheck não me cheira

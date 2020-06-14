@@ -5,9 +5,10 @@ import java.util.Map;
 import org.antlr.v4.runtime.ParserRuleContext;
 public class Dimension extends Type{
 	/*
+	Dimension works out a new data Type
 	name is the Dimension name, like Length for example
 	unit corresponds to the  the initial unit that was associated with the dimension
-	primtype corresponds to the primitive type of data associated with this dimension 
+	primtype corresponds to the primitive type of data associated with this dimension (real or integer)
 	*/
 	private String primtype;
 	private List <String> units = new ArrayList<String>(); //the units of the Dimension

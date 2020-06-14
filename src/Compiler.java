@@ -316,9 +316,9 @@ public class Compiler extends MainGramBaseVisitor<ST> {
       res.add("stat",visit(ctx.expr()));
       String info="";
       if(ctx.expr().dim.equals("noDim"))
-      info = "The variable\"" + ctx.expr().varName+"\" has no Dimension or Unit"; 
+      info = "The variable has no Dimension or Unit"; 
       else
-      info = "The variable " + ctx.expr().varName + " has Dimension "  + ctx.expr().dim + " and the Base unit " + ctx.expr().uni ; 
+      info = "The variable  has Dimension "  + ctx.expr().dim +  " and the Base Unit "  + ctx.expr().uni  ; 
       res.add("expr","\"" + info + "\"");
       return res;
    }

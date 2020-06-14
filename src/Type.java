@@ -1,4 +1,4 @@
-
+//Abstract class representing Data types
 public abstract class Type
 {
    protected Type(String name) {

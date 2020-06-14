@@ -90,7 +90,7 @@ public class MainGramCheck extends MainGramBaseVisitor<Boolean> {
          //instead of reading from user input, reads from file input
          input = CharStreams.fromStream(in_stream);
       } catch (IOException e) {
-         ErrorHandling.printError(ctx, "ERROR: reading file! ");
+         ErrorHandling.printError(ctx, "ERROR: reading file \"" + fileName + "\"");
          validation = false;
       }
       if (validation) {
@@ -554,8 +554,8 @@ public class MainGramCheck extends MainGramBaseVisitor<Boolean> {
    public Boolean visitGreatLowComparisonExpr(MainGramParser.GreatLowComparisonExprContext ctx) {
       Boolean validation =  visit(ctx.e1) &&  visit(ctx.e2);
       if (validation) {
-         if (!(ctx.e1.eType.isNumeric() || ctx.e2.eType.isNumeric())) {
-            ErrorHandling.printError(ctx, "Cannot Use operator\"" + ctx.op + "\"for Non Numeric Types of Expressions");
+         if (!ctx.e1.eType.isNumeric() || !ctx.e2.eType.isNumeric()) {
+            ErrorHandling.printError(ctx, "Cannot Use operator \"" + ctx.op.getText() + "\" for Non Numeric Types of Expressions");
             validation = false;
          }
          if(!ctx.e1.uni.equals("noUnit")&& ctx.e2.uni.equals("noUnit") || ctx.e1.uni.equals("noUnit")&& !ctx.e2.uni.equals("noUnit")  ){

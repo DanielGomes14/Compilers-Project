@@ -16,11 +16,10 @@ public class MainGramMain {
          input = CharStreams.fromStream(new FileInputStream(args[0]));
       }
       catch(Exception e){
-         ErrorHandling.printError("Couldn't find this file!");
+         ErrorHandling.printError("Couldn't find the file \"" + args[0] + "\"");
          System.exit(1);
       }
-      // create a CharStream that reads from standard input:
-      //CharStream input = CharStreams.fromStream(System.in);
+   
       // create a lexer that feeds off of input CharStream:
       MainGramLexer lexer = new MainGramLexer(input);
       // create a buffer of tokens pulled from the lexer:

@@ -1,19 +1,19 @@
-/* Uma caixa de 100 gramas é colocada num pote de 2 litros, pretende-se se saber qual o nuúmero de vezes que podem ser colocadas caixas de 100 gramas
-até que a densidade seja igual ou superior a 1. 
+/* Uma caixa de 100 gramas é colocada num pote de 2 litros, pretende-se se saber qual a massa necessária  até que a Densidade seja superior a 1 quilograma por litro.
 */
 
-import dimensoes1;
-Time t = 0 (s);
-println(t%2(s));
-Massa m4 = scan("Escreve uam merda" , Massa);
-Volume v = 2.0 (l); 
-Temperature t2;
-t2 = 23.0(F);
-for(Time i=0(s); i<10(s);i++ ){
-    t=t+1(s);
+import dimensoes2;
+Volume v = 2.0 (l);
+Massa caixa = 100.0 (g); //no compilador a massa é passada internamente a 0.1Kg, visto que o kg é a unidade base da dimensao massa
+Densidade d = 0.0 (kg/l);
+integer contador = 0;
+while (d < 1.0 (kg/l))
+{
+    caixa=caixa +1 (kg);
+    d=caixa/v;
+    contador++;
 };
-println(t);
-Massa m =  100.0 (g) ;
-Massa m2 = 1.0 (kg);
-Massa m3 = m*2.0(g);
-(m3).dimensionInfo;
+println("Número de iterações: " + contador);
+println("Massa:"  + caixa);
+(caixa).dimensionInfo;
+
+
