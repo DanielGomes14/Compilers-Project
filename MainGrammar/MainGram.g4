@@ -18,6 +18,7 @@ stat: print                           //tipo de expressoes possiveis
     | declaration
     | conditionalstat
     | increment
+    | dimensioninfo
     ;
 
 print: 'println' '(' expr ')'  ;                                                         //esrever texto ou variaveis
@@ -80,6 +81,8 @@ expr returns[Type eType, String varName, String dim, String uni]:               
     ;
 
 unit: '(' ID (op=('*'|'/') ID)*  ')'            #unitCheck ;  
+
+dimensioninfo : '(' expr ').dimensionInfo'  #dimInfo ;
 
 BOOLEAN: 'true' | 'false';                      //tipo boolean
 ID: LETTER ( LETTER | INTEGER )*;                    //nomes variaveis 

@@ -268,4 +268,11 @@ public interface MainGramVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitUnitCheck(MainGramParser.UnitCheckContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code dimInfo}
+	 * labeled alternative in {@link MainGramParser#dimensioninfo}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDimInfo(MainGramParser.DimInfoContext ctx);
 }

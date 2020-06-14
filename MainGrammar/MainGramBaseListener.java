@@ -470,6 +470,18 @@ public class MainGramBaseListener implements MainGramListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitUnitCheck(MainGramParser.UnitCheckContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterDimInfo(MainGramParser.DimInfoContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDimInfo(MainGramParser.DimInfoContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

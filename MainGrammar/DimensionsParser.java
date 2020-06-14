@@ -21,16 +21,16 @@ public class DimensionsParser extends Parser {
 		new PredictionContextCache();
 	public static final int
 		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, T__6=7, T__7=8, T__8=9, 
-		T__9=10, REAL=11, INTEGER=12, ID=13, LETTER=14, COMMENT=15, MULTICOMMENT=16, 
-		WS=17;
+		T__9=10, SIGN=11, REAL=12, INTEGER=13, ID=14, LETTER=15, COMMENT=16, MULTICOMMENT=17, 
+		WS=18;
 	public static final int
 		RULE_program = 0, RULE_stats = 1, RULE_declaration = 2, RULE_addunit = 3, 
-		RULE_type = 4, RULE_conversion = 5, RULE_datatype = 6, RULE_unit = 7, 
-		RULE_number = 8;
+		RULE_type = 4, RULE_conversion = 5, RULE_polynomial = 6, RULE_monomial = 7, 
+		RULE_datatype = 8, RULE_unit = 9, RULE_number = 10;
 	private static String[] makeRuleNames() {
 		return new String[] {
-			"program", "stats", "declaration", "addunit", "type", "conversion", "datatype", 
-			"unit", "number"
+			"program", "stats", "declaration", "addunit", "type", "conversion", "polynomial", 
+			"monomial", "datatype", "unit", "number"
 		};
 	}
 	public static final String[] ruleNames = makeRuleNames();
@@ -44,8 +44,8 @@ public class DimensionsParser extends Parser {
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 	private static String[] makeSymbolicNames() {
 		return new String[] {
-			null, null, null, null, null, null, null, null, null, null, null, "REAL", 
-			"INTEGER", "ID", "LETTER", "COMMENT", "MULTICOMMENT", "WS"
+			null, null, null, null, null, null, null, null, null, null, null, "SIGN", 
+			"REAL", "INTEGER", "ID", "LETTER", "COMMENT", "MULTICOMMENT", "WS"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -145,21 +145,21 @@ public class DimensionsParser extends Parser {
 			_localctx = new ProgContext(_localctx);
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(21);
+			setState(25);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==ID) {
 				{
 				{
-				setState(18);
+				setState(22);
 				stats();
 				}
 				}
-				setState(23);
+				setState(27);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(24);
+			setState(28);
 			match(EOF);
 			}
 		}
@@ -215,23 +215,23 @@ public class DimensionsParser extends Parser {
 			_localctx = new StatContext(_localctx);
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(28);
+			setState(32);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,1,_ctx) ) {
 			case 1:
 				{
-				setState(26);
+				setState(30);
 				declaration();
 				}
 				break;
 			case 2:
 				{
-				setState(27);
+				setState(31);
 				addunit();
 				}
 				break;
 			}
-			setState(30);
+			setState(34);
 			match(T__0);
 			}
 		}
@@ -285,11 +285,11 @@ public class DimensionsParser extends Parser {
 			_localctx = new DeclarContext(_localctx);
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(32);
+			setState(36);
 			match(ID);
-			setState(33);
+			setState(37);
 			match(T__1);
-			setState(34);
+			setState(38);
 			type();
 			}
 		}
@@ -343,11 +343,11 @@ public class DimensionsParser extends Parser {
 			_localctx = new AddUnContext(_localctx);
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(36);
+			setState(40);
 			match(ID);
-			setState(37);
+			setState(41);
 			match(T__2);
-			setState(38);
+			setState(42);
 			type();
 			}
 		}
@@ -441,16 +441,16 @@ public class DimensionsParser extends Parser {
 		enterRule(_localctx, 8, RULE_type);
 		int _la;
 		try {
-			setState(47);
+			setState(51);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,2,_ctx) ) {
 			case 1:
 				_localctx = new TypeNormalContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(40);
+				setState(44);
 				datatype();
-				setState(41);
+				setState(45);
 				unit();
 				}
 				break;
@@ -458,9 +458,9 @@ public class DimensionsParser extends Parser {
 				_localctx = new TypeVarsContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(43);
+				setState(47);
 				match(ID);
-				setState(44);
+				setState(48);
 				((TypeVarsContext)_localctx).op = _input.LT(1);
 				_la = _input.LA(1);
 				if ( !(_la==T__3 || _la==T__4) ) {
@@ -471,7 +471,7 @@ public class DimensionsParser extends Parser {
 					_errHandler.reportMatch(this);
 					consume();
 				}
-				setState(45);
+				setState(49);
 				match(ID);
 				}
 				break;
@@ -479,7 +479,7 @@ public class DimensionsParser extends Parser {
 				_localctx = new TypeConversionsContext(_localctx);
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(46);
+				setState(50);
 				conversion();
 				}
 				break;
@@ -497,37 +497,25 @@ public class DimensionsParser extends Parser {
 	}
 
 	public static class ConversionContext extends ParserRuleContext {
+		public TerminalNode ID() { return getToken(DimensionsParser.ID, 0); }
+		public PolynomialContext polynomial() {
+			return getRuleContext(PolynomialContext.class,0);
+		}
 		public ConversionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_conversion; }
-	 
-		public ConversionContext() { }
-		public void copyFrom(ConversionContext ctx) {
-			super.copyFrom(ctx);
-		}
-	}
-	public static class ConvCheckContext extends ConversionContext {
-		public Token op;
-		public List<TerminalNode> ID() { return getTokens(DimensionsParser.ID); }
-		public TerminalNode ID(int i) {
-			return getToken(DimensionsParser.ID, i);
-		}
-		public NumberContext number() {
-			return getRuleContext(NumberContext.class,0);
-		}
-		public ConvCheckContext(ConversionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof DimensionsListener ) ((DimensionsListener)listener).enterConvCheck(this);
+			if ( listener instanceof DimensionsListener ) ((DimensionsListener)listener).enterConversion(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof DimensionsListener ) ((DimensionsListener)listener).exitConvCheck(this);
+			if ( listener instanceof DimensionsListener ) ((DimensionsListener)listener).exitConversion(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof DimensionsVisitor ) return ((DimensionsVisitor<? extends T>)visitor).visitConvCheck(this);
+			if ( visitor instanceof DimensionsVisitor ) return ((DimensionsVisitor<? extends T>)visitor).visitConversion(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -535,30 +523,187 @@ public class DimensionsParser extends Parser {
 	public final ConversionContext conversion() throws RecognitionException {
 		ConversionContext _localctx = new ConversionContext(_ctx, getState());
 		enterRule(_localctx, 10, RULE_conversion);
-		int _la;
 		try {
-			_localctx = new ConvCheckContext(_localctx);
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(49);
-			match(ID);
-			setState(50);
-			match(T__5);
-			setState(51);
-			number();
-			setState(52);
-			((ConvCheckContext)_localctx).op = _input.LT(1);
-			_la = _input.LA(1);
-			if ( !(_la==T__3 || _la==T__4) ) {
-				((ConvCheckContext)_localctx).op = (Token)_errHandler.recoverInline(this);
-			}
-			else {
-				if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
-				_errHandler.reportMatch(this);
-				consume();
-			}
 			setState(53);
 			match(ID);
+			setState(54);
+			match(T__5);
+			setState(55);
+			polynomial();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class PolynomialContext extends ParserRuleContext {
+		public Token sg;
+		public List<MonomialContext> monomial() {
+			return getRuleContexts(MonomialContext.class);
+		}
+		public MonomialContext monomial(int i) {
+			return getRuleContext(MonomialContext.class,i);
+		}
+		public List<TerminalNode> SIGN() { return getTokens(DimensionsParser.SIGN); }
+		public TerminalNode SIGN(int i) {
+			return getToken(DimensionsParser.SIGN, i);
+		}
+		public PolynomialContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_polynomial; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DimensionsListener ) ((DimensionsListener)listener).enterPolynomial(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DimensionsListener ) ((DimensionsListener)listener).exitPolynomial(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DimensionsVisitor ) return ((DimensionsVisitor<? extends T>)visitor).visitPolynomial(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final PolynomialContext polynomial() throws RecognitionException {
+		PolynomialContext _localctx = new PolynomialContext(_ctx, getState());
+		enterRule(_localctx, 12, RULE_polynomial);
+		int _la;
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			{
+			setState(58);
+			_errHandler.sync(this);
+			_la = _input.LA(1);
+			if (_la==SIGN) {
+				{
+				setState(57);
+				((PolynomialContext)_localctx).sg = match(SIGN);
+				}
+			}
+
+			setState(60);
+			monomial();
+			}
+			setState(66);
+			_errHandler.sync(this);
+			_la = _input.LA(1);
+			while (_la==SIGN) {
+				{
+				{
+				setState(62);
+				match(SIGN);
+				setState(63);
+				monomial();
+				}
+				}
+				setState(68);
+				_errHandler.sync(this);
+				_la = _input.LA(1);
+			}
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class MonomialContext extends ParserRuleContext {
+		public MonomialContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_monomial; }
+	 
+		public MonomialContext() { }
+		public void copyFrom(MonomialContext ctx) {
+			super.copyFrom(ctx);
+		}
+	}
+	public static class RealMonomialContext extends MonomialContext {
+		public NumberContext number() {
+			return getRuleContext(NumberContext.class,0);
+		}
+		public TerminalNode ID() { return getToken(DimensionsParser.ID, 0); }
+		public RealMonomialContext(MonomialContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DimensionsListener ) ((DimensionsListener)listener).enterRealMonomial(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DimensionsListener ) ((DimensionsListener)listener).exitRealMonomial(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DimensionsVisitor ) return ((DimensionsVisitor<? extends T>)visitor).visitRealMonomial(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ConstContext extends MonomialContext {
+		public NumberContext number() {
+			return getRuleContext(NumberContext.class,0);
+		}
+		public ConstContext(MonomialContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DimensionsListener ) ((DimensionsListener)listener).enterConst(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DimensionsListener ) ((DimensionsListener)listener).exitConst(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DimensionsVisitor ) return ((DimensionsVisitor<? extends T>)visitor).visitConst(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final MonomialContext monomial() throws RecognitionException {
+		MonomialContext _localctx = new MonomialContext(_ctx, getState());
+		enterRule(_localctx, 14, RULE_monomial);
+		try {
+			setState(74);
+			_errHandler.sync(this);
+			switch ( getInterpreter().adaptivePredict(_input,5,_ctx) ) {
+			case 1:
+				_localctx = new RealMonomialContext(_localctx);
+				enterOuterAlt(_localctx, 1);
+				{
+				setState(69);
+				number();
+				setState(70);
+				match(T__3);
+				setState(71);
+				match(ID);
+				}
+				break;
+			case 2:
+				_localctx = new ConstContext(_localctx);
+				enterOuterAlt(_localctx, 2);
+				{
+				setState(73);
+				number();
+				}
+				break;
 			}
 		}
 		catch (RecognitionException re) {
@@ -603,13 +748,13 @@ public class DimensionsParser extends Parser {
 
 	public final DatatypeContext datatype() throws RecognitionException {
 		DatatypeContext _localctx = new DatatypeContext(_ctx, getState());
-		enterRule(_localctx, 12, RULE_datatype);
+		enterRule(_localctx, 16, RULE_datatype);
 		int _la;
 		try {
 			_localctx = new DTypeCheckContext(_localctx);
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(55);
+			setState(76);
 			((DTypeCheckContext)_localctx).dt = _input.LT(1);
 			_la = _input.LA(1);
 			if ( !(_la==T__6 || _la==T__7) ) {
@@ -668,23 +813,23 @@ public class DimensionsParser extends Parser {
 
 	public final UnitContext unit() throws RecognitionException {
 		UnitContext _localctx = new UnitContext(_ctx, getState());
-		enterRule(_localctx, 14, RULE_unit);
+		enterRule(_localctx, 18, RULE_unit);
 		int _la;
 		try {
 			_localctx = new UnitCheckContext(_localctx);
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(57);
+			setState(78);
 			match(T__8);
-			setState(58);
+			setState(79);
 			match(ID);
-			setState(63);
+			setState(84);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==T__3 || _la==T__4) {
 				{
 				{
-				setState(59);
+				setState(80);
 				((UnitCheckContext)_localctx).op = _input.LT(1);
 				_la = _input.LA(1);
 				if ( !(_la==T__3 || _la==T__4) ) {
@@ -695,15 +840,15 @@ public class DimensionsParser extends Parser {
 					_errHandler.reportMatch(this);
 					consume();
 				}
-				setState(60);
+				setState(81);
 				match(ID);
 				}
 				}
-				setState(65);
+				setState(86);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(66);
+			setState(87);
 			match(T__9);
 			}
 		}
@@ -742,12 +887,12 @@ public class DimensionsParser extends Parser {
 
 	public final NumberContext number() throws RecognitionException {
 		NumberContext _localctx = new NumberContext(_ctx, getState());
-		enterRule(_localctx, 16, RULE_number);
+		enterRule(_localctx, 20, RULE_number);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(68);
+			setState(89);
 			_la = _input.LA(1);
 			if ( !(_la==REAL || _la==INTEGER) ) {
 			_errHandler.recoverInline(this);
@@ -771,24 +916,29 @@ public class DimensionsParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\23I\4\2\t\2\4\3\t"+
-		"\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\3\2\7\2\26"+
-		"\n\2\f\2\16\2\31\13\2\3\2\3\2\3\3\3\3\5\3\37\n\3\3\3\3\3\3\4\3\4\3\4\3"+
-		"\4\3\5\3\5\3\5\3\5\3\6\3\6\3\6\3\6\3\6\3\6\3\6\5\6\62\n\6\3\7\3\7\3\7"+
-		"\3\7\3\7\3\7\3\b\3\b\3\t\3\t\3\t\3\t\7\t@\n\t\f\t\16\tC\13\t\3\t\3\t\3"+
-		"\n\3\n\3\n\2\2\13\2\4\6\b\n\f\16\20\22\2\5\3\2\6\7\3\2\t\n\3\2\r\16\2"+
-		"D\2\27\3\2\2\2\4\36\3\2\2\2\6\"\3\2\2\2\b&\3\2\2\2\n\61\3\2\2\2\f\63\3"+
-		"\2\2\2\169\3\2\2\2\20;\3\2\2\2\22F\3\2\2\2\24\26\5\4\3\2\25\24\3\2\2\2"+
-		"\26\31\3\2\2\2\27\25\3\2\2\2\27\30\3\2\2\2\30\32\3\2\2\2\31\27\3\2\2\2"+
-		"\32\33\7\2\2\3\33\3\3\2\2\2\34\37\5\6\4\2\35\37\5\b\5\2\36\34\3\2\2\2"+
-		"\36\35\3\2\2\2\37 \3\2\2\2 !\7\3\2\2!\5\3\2\2\2\"#\7\17\2\2#$\7\4\2\2"+
-		"$%\5\n\6\2%\7\3\2\2\2&\'\7\17\2\2\'(\7\5\2\2()\5\n\6\2)\t\3\2\2\2*+\5"+
-		"\16\b\2+,\5\20\t\2,\62\3\2\2\2-.\7\17\2\2./\t\2\2\2/\62\7\17\2\2\60\62"+
-		"\5\f\7\2\61*\3\2\2\2\61-\3\2\2\2\61\60\3\2\2\2\62\13\3\2\2\2\63\64\7\17"+
-		"\2\2\64\65\7\b\2\2\65\66\5\22\n\2\66\67\t\2\2\2\678\7\17\2\28\r\3\2\2"+
-		"\29:\t\3\2\2:\17\3\2\2\2;<\7\13\2\2<A\7\17\2\2=>\t\2\2\2>@\7\17\2\2?="+
-		"\3\2\2\2@C\3\2\2\2A?\3\2\2\2AB\3\2\2\2BD\3\2\2\2CA\3\2\2\2DE\7\f\2\2E"+
-		"\21\3\2\2\2FG\t\4\2\2G\23\3\2\2\2\6\27\36\61A";
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\24^\4\2\t\2\4\3\t"+
+		"\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4"+
+		"\f\t\f\3\2\7\2\32\n\2\f\2\16\2\35\13\2\3\2\3\2\3\3\3\3\5\3#\n\3\3\3\3"+
+		"\3\3\4\3\4\3\4\3\4\3\5\3\5\3\5\3\5\3\6\3\6\3\6\3\6\3\6\3\6\3\6\5\6\66"+
+		"\n\6\3\7\3\7\3\7\3\7\3\b\5\b=\n\b\3\b\3\b\3\b\3\b\7\bC\n\b\f\b\16\bF\13"+
+		"\b\3\t\3\t\3\t\3\t\3\t\5\tM\n\t\3\n\3\n\3\13\3\13\3\13\3\13\7\13U\n\13"+
+		"\f\13\16\13X\13\13\3\13\3\13\3\f\3\f\3\f\2\2\r\2\4\6\b\n\f\16\20\22\24"+
+		"\26\2\5\3\2\6\7\3\2\t\n\3\2\16\17\2Z\2\33\3\2\2\2\4\"\3\2\2\2\6&\3\2\2"+
+		"\2\b*\3\2\2\2\n\65\3\2\2\2\f\67\3\2\2\2\16<\3\2\2\2\20L\3\2\2\2\22N\3"+
+		"\2\2\2\24P\3\2\2\2\26[\3\2\2\2\30\32\5\4\3\2\31\30\3\2\2\2\32\35\3\2\2"+
+		"\2\33\31\3\2\2\2\33\34\3\2\2\2\34\36\3\2\2\2\35\33\3\2\2\2\36\37\7\2\2"+
+		"\3\37\3\3\2\2\2 #\5\6\4\2!#\5\b\5\2\" \3\2\2\2\"!\3\2\2\2#$\3\2\2\2$%"+
+		"\7\3\2\2%\5\3\2\2\2&\'\7\20\2\2\'(\7\4\2\2()\5\n\6\2)\7\3\2\2\2*+\7\20"+
+		"\2\2+,\7\5\2\2,-\5\n\6\2-\t\3\2\2\2./\5\22\n\2/\60\5\24\13\2\60\66\3\2"+
+		"\2\2\61\62\7\20\2\2\62\63\t\2\2\2\63\66\7\20\2\2\64\66\5\f\7\2\65.\3\2"+
+		"\2\2\65\61\3\2\2\2\65\64\3\2\2\2\66\13\3\2\2\2\678\7\20\2\289\7\b\2\2"+
+		"9:\5\16\b\2:\r\3\2\2\2;=\7\r\2\2<;\3\2\2\2<=\3\2\2\2=>\3\2\2\2>?\5\20"+
+		"\t\2?D\3\2\2\2@A\7\r\2\2AC\5\20\t\2B@\3\2\2\2CF\3\2\2\2DB\3\2\2\2DE\3"+
+		"\2\2\2E\17\3\2\2\2FD\3\2\2\2GH\5\26\f\2HI\7\6\2\2IJ\7\20\2\2JM\3\2\2\2"+
+		"KM\5\26\f\2LG\3\2\2\2LK\3\2\2\2M\21\3\2\2\2NO\t\3\2\2O\23\3\2\2\2PQ\7"+
+		"\13\2\2QV\7\20\2\2RS\t\2\2\2SU\7\20\2\2TR\3\2\2\2UX\3\2\2\2VT\3\2\2\2"+
+		"VW\3\2\2\2WY\3\2\2\2XV\3\2\2\2YZ\7\f\2\2Z\25\3\2\2\2[\\\t\4\2\2\\\27\3"+
+		"\2\2\2\t\33\"\65<DLV";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

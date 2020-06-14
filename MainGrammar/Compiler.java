@@ -8,6 +8,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.stringtemplate.v4.*;
 
 
+
 public class Compiler extends MainGramBaseVisitor<ST> {
    protected int varCount = 0;
    protected String target = "java"; // default
@@ -182,7 +183,17 @@ public class Compiler extends MainGramBaseVisitor<ST> {
       ctx.varName = newVar();
       res.add("type", "integer");
       res.add("var", ctx.varName);
-      res.add("value", ctx.INTEGER().getText());
+      int val = Integer.parseInt(ctx.INTEGER().getText());
+      if (ctx.unit()!=null){
+         String unit = ctx.unit().getText().replace("(","").replace(")","");
+         for (Dimension d :DimensionsParser.dimTable.values()){
+            if (!d.checkUnit(unit)){
+             double val2 =d.calcConversion(unit,val);
+              val=(int)val2;
+            }
+         }
+      }
+      res.add("value", val );
       return res;
    }
 
@@ -191,7 +202,19 @@ public class Compiler extends MainGramBaseVisitor<ST> {
       ctx.varName = newVar();
       res.add("type", "real");
       res.add("var", ctx.varName);
-      res.add("value", ctx.REAL().getText());
+      double temp = Double.parseDouble(ctx.REAL().getText());
+      if (ctx.unit()!=null){
+         String unit = ctx.unit().getText().replace("(","").replace(")","");
+         for (Dimension d : DimensionsParser.dimTable.values()){
+            if (!d.checkUnit(unit)){
+              
+              temp=d.calcConversion(unit,temp);
+              System.out.println(temp);
+            }
+         }
+      }
+      double val = temp;
+      res.add("value", val );
       return res;
    }
 
@@ -290,8 +313,17 @@ public class Compiler extends MainGramBaseVisitor<ST> {
    }
 
 
-   @Override public ST visitUnitCheck(MainGramParser.UnitCheckContext ctx) {
-      return visitChildren(ctx);
+   @Override 
+   public ST visitDimInfo(MainGramParser.DimInfoContext ctx){
+      ST res = stg.getInstanceOf("print");
+      res.add("stat",visit(ctx.expr()));
+      String info="";
+      if(ctx.expr().dim.equals("noDim"))
+      info = "The variable\"" + ctx.expr().varName+"\" has no Dimension or Unit"; 
+      else
+      info = "The variable " + ctx.expr().varName + " has Dimension "  + ctx.expr().dim + " and the Base unit " + ctx.expr().uni ; 
+      res.add("expr","\"" + info + "\"");
+      return res;
    }
 
 

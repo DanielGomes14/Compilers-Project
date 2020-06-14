@@ -444,4 +444,16 @@ public interface MainGramListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitUnitCheck(MainGramParser.UnitCheckContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code dimInfo}
+	 * labeled alternative in {@link MainGramParser#dimensioninfo}.
+	 * @param ctx the parse tree
+	 */
+	void enterDimInfo(MainGramParser.DimInfoContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code dimInfo}
+	 * labeled alternative in {@link MainGramParser#dimensioninfo}.
+	 * @param ctx the parse tree
+	 */
+	void exitDimInfo(MainGramParser.DimInfoContext ctx);
 }

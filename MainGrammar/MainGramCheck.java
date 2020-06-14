@@ -157,6 +157,8 @@ public class MainGramCheck extends MainGramBaseVisitor<Boolean> {
       return validation;
    }
 
+
+
    @Override
    public Boolean visitAssign(MainGramParser.AssignContext ctx) {
      boolean validation =  visit(ctx.expr());
@@ -508,6 +510,7 @@ public class MainGramCheck extends MainGramBaseVisitor<Boolean> {
 
       return validation;
    }
+
 
    @Override
    public Boolean visitBooleanExpr(MainGramParser.BooleanExprContext ctx) {

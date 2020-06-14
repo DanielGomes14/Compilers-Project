@@ -7,12 +7,9 @@ import dimensoes2 ; // abrir ficheiro que contem dimensões
 
 Volume v = 2.0 (l); 
 Massa m =  100.0 (g);
-Densidade d;
+(m).dimensionInfo;
+Densidade d ;
 integer counter = 0;
-while ( d < 1 )
-{
-    d = m/v;
-    m = m * 50 (s);
-    counter ++ ;
-};
+Massa m2 = 10.0 (kg);
+Massa m3 = m + m2;
 println("Numero de ciclos:" +  counter);

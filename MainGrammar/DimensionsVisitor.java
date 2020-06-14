@@ -63,12 +63,31 @@ public interface DimensionsVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitTypeConversions(DimensionsParser.TypeConversionsContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code ConvCheck}
-	 * labeled alternative in {@link DimensionsParser#conversion}.
+	 * Visit a parse tree produced by {@link DimensionsParser#conversion}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitConvCheck(DimensionsParser.ConvCheckContext ctx);
+	T visitConversion(DimensionsParser.ConversionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link DimensionsParser#polynomial}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPolynomial(DimensionsParser.PolynomialContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code realMonomial}
+	 * labeled alternative in {@link DimensionsParser#monomial}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitRealMonomial(DimensionsParser.RealMonomialContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code const}
+	 * labeled alternative in {@link DimensionsParser#monomial}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitConst(DimensionsParser.ConstContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code DTypeCheck}
 	 * labeled alternative in {@link DimensionsParser#datatype}.
