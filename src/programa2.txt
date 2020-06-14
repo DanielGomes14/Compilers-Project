@@ -2,7 +2,6 @@
 até que a densidade seja igual ou superior a 1. 
 */
 
-import dimensoes2 ; // abrir ficheiro que contem dimensões
 import dimensoes1;
 Time t = 0 (s);
 println(t%2(s));
@@ -10,7 +9,7 @@ Massa m4 = scan("Escreve uam merda" , Massa);
 Volume v = 2.0 (l); 
 Temperature t2;
 t2 = 23.0(F);
-for(Time i=0(s); i<10(s);i+1(s) ){
+for(Time i=0(s); i<10(s);i++ ){
     t=t+1(s);
 };
 println(t);

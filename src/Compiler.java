@@ -38,7 +38,6 @@ public class Compiler extends MainGramBaseVisitor<ST> {
    @Override public ST visitPrint(MainGramParser.PrintContext ctx) {
       ST res = stg.getInstanceOf("print");
       res.add("stat", visit(ctx.expr()));
-      //res.add("type", ctx.expr().eType.name());
       res.add("expr",ctx.expr().varName);
       return res;
    }
@@ -106,13 +105,13 @@ public class Compiler extends MainGramBaseVisitor<ST> {
       ST res = stg.getInstanceOf("conditionloop");
       String a = "";
       res.add("statfor",a=visit(ctx.assignment()).render());
-      String incVar = a.split("\n")[a.split("\n").length - 1].split(" ")[1].replace(";","");
+      String inc = a.split("\n")[a.split("\n").length - 1].split(" ")[1].replace(";","");
       res.add("statbefore",visit(ctx.expr(0)).render());
       res.add("var",ctx.expr(0).varName);
       res.add("statafter",visit(ctx.trueSL).render());
       res.add("statafter", visit(ctx.expr(1)).render());
       ST assg = stg.getInstanceOf("assign");
-      assg.add("var",incVar);
+      assg.add("var",inc);
       assg.add("value",ctx.expr(1).varName);
       res.add("statafter",assg.render());
       return res;
@@ -311,7 +310,6 @@ public class Compiler extends MainGramBaseVisitor<ST> {
       return res;
    }
 
-
    @Override 
    public ST visitDimInfo(MainGramParser.DimInfoContext ctx){
       ST res = stg.getInstanceOf("print");
@@ -324,7 +322,6 @@ public class Compiler extends MainGramBaseVisitor<ST> {
       res.add("expr","\"" + info + "\"");
       return res;
    }
-
 
 
    protected ST binaryExpression(ParserRuleContext ctx, String e1Stats, String e2Stats, String type, String var, String e1Var, String op, String e2Var) {

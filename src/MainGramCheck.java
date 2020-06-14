@@ -82,7 +82,7 @@ public class MainGramCheck extends MainGramBaseVisitor<Boolean> {
    @Override
    public Boolean visitImportDimensionFile(MainGramParser.ImportDimensionFileContext ctx) {
       Boolean validation = true;
-      String fileName = ctx.ID().getText() + ".txt";
+      String fileName = ctx.ID().getText()+".txt";
       InputStream in_stream = null;
       CharStream input = null;
       try {
@@ -395,7 +395,7 @@ public class MainGramCheck extends MainGramBaseVisitor<Boolean> {
                }
             }
             else{
-               ctx.uni="Void";
+               ctx.uni="noUnit";
             }
             Type t = fecthType(ctx.e1.eType,ctx.e2.eType, ctx.op.getText());
             if ( t == null){

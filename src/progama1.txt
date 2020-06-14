@@ -2,7 +2,7 @@
 /*
 Sabendo que um carro a cada segundo percorreu 10 metros, pretende-se saber ao fim de 10 segundos qual a distância percorrida. 
 Calcule a velocidade, em m/s, associada, imprimindo o valor associado.
-O condutor desconfia que a sua velocidade foi de 20 metros por segundo, será que tem razão? 
+O condutor desconfia que a sua velocidade foi de 20.0 metros por segundo, será que tem razão? 
 */
 
 import dimensoes1;
@@ -10,12 +10,16 @@ import dimensoes1;
 Velocity vel;
 Length d = 0.0 (m);
 Time t = 0 (s);
-for(Time t1 = 0(s); t1< 10; t1++)
+for(Time t1 = 0(s); t1< 10(s); t1++)
 {
-    t = t +  1 (s);
+   t=t+1(s);
+   d=d + 10.0(m);
 };
 vel = d/t;
-println ( "Velocidade: " + vel ); 
-if (vel == 20(m/s))
+if (vel == 20.0(m/s))
 {
-    println( "Velocidade de 20 m/s" );};
+    println( "Velocidade de 20.0 m/s" );
+}
+else {
+    println("Velocidade de " + vel);
+};    

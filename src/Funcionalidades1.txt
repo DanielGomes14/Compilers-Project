@@ -1,4 +1,4 @@
-println 1+1;
+println ( 1+1 );
 
 string d1; //declaração de variavel de tipo string
 
@@ -60,7 +60,7 @@ for (integer var1 = 0 ; var1 <= 10 ; var1++ )
 
 };
 
-string prompt = scan( "Enter something" );      // ler do utilizador o valor para prompt
+string prompt = scan( "Enter something",string);      // ler do utilizador o valor para prompt
 
 // This a single line comment
 
