@@ -186,7 +186,7 @@ public class MainGramCheck extends MainGramBaseVisitor<Boolean> {
                      ErrorHandling.printError(ctx, "The unit \"" + unit + "\" is not allowed for dimension " + dim.name());
                      validation = false;
                   }
-               } else {
+               } else if(!isinput) {
                   ErrorHandling.printError(ctx, "You must indicate the unit for Type \"" + sb.type() + "\" .");
                }
             }
@@ -204,6 +204,7 @@ public class MainGramCheck extends MainGramBaseVisitor<Boolean> {
          }
       
       }
+      isinput=true;
       return validation;
    }
 
